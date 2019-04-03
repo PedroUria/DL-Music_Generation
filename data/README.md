@@ -10,3 +10,10 @@ We could also do *transposition* to double the size of our datasets, and for oth
 
 Check [this](http://web.mit.edu/music21/doc/usersGuide/usersGuide_08_installingMusicXML.html) for more potential sources in other formats. 
 
+
+NOTE: 
+
+> How do I go about finding a certain classical work in MIDI format in the Internet?
+Some MIDI archives in the Internet contain thousands of classical works. You can find the corresponding links to them on my [Linkpage](http://piano-midi.de/links.htm). **The quality of the pieces, however, may vary considerably**.
+
+Taken from [here](http://piano-midi.de/faq.htm). At least I can say that his work is awesome. 
