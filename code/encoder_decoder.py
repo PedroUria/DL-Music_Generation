@@ -27,7 +27,7 @@ def encode(hand):
     notes_freq = np.array(notes_freq)
     
     # Gets the time step. Each vector will contain note/s of 16th length 
-    time_step = 0.25
+    time_step = 0.05
     
     # Gets the numpy array to store all the encoded notes, rests, holds and tempo
     for nt in hand[::-1]:  # To do so, we need to get the offset
@@ -51,9 +51,11 @@ def encode(hand):
                 notes[:, 89] = nt.number
                 temp_flag = False
         if idx >= 0:
-            # Loops over the duration of the note (if a note is 8th
+            # Loops over the duration of the note (if a note is 32nd
             # we need to put this note in two consecutive vector)
-            for i in range(int(nt.duration.quarterLength/time_step)):
+            n_vectors = int(nt.duration.quarterLength/time_step)  # 0.33 will be 6 vectors
+            # when the actual number would be 0.33/0.05 = 6.6 vectors
+            for i in range(n_vectors):
                 # Note encoding: one/many-hot encoding
                 if type(nt) == ms.note.Note:
                     notes[idx + i, :87] += (notes_freq == nt.pitch.frequency)*1
@@ -109,14 +111,14 @@ def decode(notes_encoded, tempo=74):
     stream.append(ms.key.Key("C"))
     stream.append(ms.meter.TimeSignature())
     
-    time_step = 0.25
+    time_step = 0.05
     offset = 0
     hold = {}  # Will store the duration of the hold for each note
     for j, p in enumerate(notes_encoded):
         if p[87]:  # If we have a Rest, do the same as below
             try:
                 if offset < hold[87]:
-                    offset += 0.25
+                    offset += 0.05
                     continue
             except:
                 pass
@@ -137,7 +139,6 @@ def decode(notes_encoded, tempo=74):
             for frequ_index in np.nonzero(notes_freq * p[:87])[0]:
                 try:  # If the duration of the hold + offset is longer than the current offset
                     if offset < hold[frequ_index]:
-                        #offset += 0.25
                         continue  # Do not append this note to the stream
                 except:  # As it will be the same note appended on the first previous iteration
                     pass
@@ -158,7 +159,7 @@ def decode(notes_encoded, tempo=74):
                 # Sets the offset (need to do it here)
                 stream[-1].offset = offset
 
-        offset += 0.25
+        offset += 0.05
                 
     # Accounts for chords
     stream_with_chords = ms.stream.Stream()
