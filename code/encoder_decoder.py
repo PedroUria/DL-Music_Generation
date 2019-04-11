@@ -2,19 +2,22 @@ import music21 as ms
 import numpy as np
 
 
-def encode(hand):
+def encode(hand, time_step=0.05):
     
     """
     Many-hot-encoding of a hand of a musical piece
     :param hand: a music21 stream for piano instrument
     :returns: encoded ordered temporal vectors
-    Each vector corresponds to a time_step=16th
+    Each vector corresponds to a time_step=64th
     Components 0 to 87 are the notes in ascending
     frequency order. Component 88 = 1 if there is
     a rest. Component 89 indicates hold, to account
-    for notes with duration longer than 16th. Last
-    component (90) is the tempo, as integer from ...
-    NOTE: This works on only one hand (stream which 
+    for notes with duration longer than 64th. Last
+    component (90) is the tempo, with numerical values
+    indicating the speed at which the music piece is being played
+    Even if the tempo changes at the middle of the piece,
+    this function sets the same tempo for all notes in the piece.
+    NOTE: This works on one hand only (stream which 
     does not contain any other streams)
     """
     
@@ -27,7 +30,7 @@ def encode(hand):
     notes_freq = np.array(notes_freq)
     
     # Gets the time step. Each vector will contain note/s of 16th length 
-    time_step = 0.05
+    time_step = time_step
     
     # Gets the numpy array to store all the encoded notes, rests, holds and tempo
     for nt in hand[::-1]:  # To do so, we need to get the offset
@@ -74,15 +77,15 @@ def encode(hand):
     return notes
 
 
-def decode(notes_encoded, tempo=74):
+def decode(notes_encoded, tempo=74, time_step=0.05):
     
     """
     Returns the encoded notes by encode()
     to the original music21 notation
     to get the MIDI file back
-    :param: notes_encoded: ordered temporal
+    :param notes_encoded: ordered temporal
     vectors in a 2D NumPy array, where
-    each row is representes the music at certain time
+    each row representes the music at certain time_step
     :param: tempo
     :returns: music21 stream object
     """
@@ -111,14 +114,14 @@ def decode(notes_encoded, tempo=74):
     stream.append(ms.key.Key("C"))
     stream.append(ms.meter.TimeSignature())
     
-    time_step = 0.05
+    time_step = time_step
     offset = 0
     hold = {}  # Will store the duration of the hold for each note
     for j, p in enumerate(notes_encoded):
         if p[87]:  # If we have a Rest, do the same as below
             try:
                 if offset < hold[87]:
-                    offset += 0.05
+                    offset += time_step
                     continue
             except:
                 pass
@@ -159,7 +162,7 @@ def decode(notes_encoded, tempo=74):
                 # Sets the offset (need to do it here)
                 stream[-1].offset = offset
 
-        offset += 0.05
+        offset += time_step
                 
     # Accounts for chords
     stream_with_chords = ms.stream.Stream()
