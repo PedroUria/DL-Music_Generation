@@ -107,12 +107,19 @@ def decode(notes_encoded, tempo=74, time_step=0.05):
     # Creates the stream object and appends some default stuff 
     stream = ms.stream.Stream()
     stream.append(ms.instrument.Piano())
-    if notes_encoded[0, -1]:  # If we encode and decode the left hand by separate
-        stream.append(ms.tempo.MetronomeMark(number=int(notes_encoded[0, -1])))
-    else:  # It will have tempo=0, so we need this.
-        stream.append(ms.tempo.MetronomeMark(number=tempo))
+    # Commenting this out for now because we may not be able to use the tempo with our approach...
+    #if notes_encoded[0, -1]:  # If we encode and decode the left hand by separate
+    #    stream.append(ms.tempo.MetronomeMark(number=int(notes_encoded[0, -1])))
+    #else:  # It will have tempo=0, so we need this.
+    #    stream.append(ms.tempo.MetronomeMark(number=tempo))
+    stream.append(ms.tempo.MetronomeMark(number=tempo))
     stream.append(ms.key.Key("C"))
     stream.append(ms.meter.TimeSignature())
+
+    if notes_encoded.shape[1] == 90:
+        hold_index = -2
+    else:
+        hold_index = -1
     
     time_step = time_step
     offset = 0
@@ -127,12 +134,16 @@ def decode(notes_encoded, tempo=74, time_step=0.05):
                 pass
             nt = ms.note.Rest()
             dur = time_step
-            if p[-2]:  
-                i = j + 1  
-                dur += time_step
-                while notes_encoded[i][-2]:  
+            if p[hold_index]:  
+                i = j + 1
+                if i < len(notes_encoded) - 1:
                     dur += time_step
-                    i += 1
+                    while notes_encoded[i][hold_index]:  
+                        dur += time_step
+                        if i < len(notes_encoded) - 1: 
+                            i += 1
+                        else:
+                            break
             hold[87] = dur + offset  
             nt.duration = ms.duration.Duration(dur)
             stream.append(nt)
@@ -149,12 +160,16 @@ def decode(notes_encoded, tempo=74, time_step=0.05):
                 nt = ms.note.Note(notes_letters[int(frequ_index)])
                 # Gets the duration
                 dur = time_step
-                if p[-2]:  # If we have a hold
+                if p[hold_index]:  # If we have a hold
                     i = j + 1  # Move onto the next p vector
-                    dur += time_step
-                    while notes_encoded[i][-2]:  # And do so until the hold dissapears
+                    if i < len(notes_encoded) - 1:
                         dur += time_step
-                        i += 1
+                        while notes_encoded[i][-2]:  # And do so until the hold dissapears
+                            dur += time_step
+                            if  i < len(notes_encoded) - 1: # In case thre is a hold on the last note
+                                i += 1
+                            else:
+                                break
                 hold[frequ_index] = dur + offset  # Total duration of the hold, from the offset
                 nt.duration = ms.duration.Duration(dur)
                 # Appends to the stream
@@ -202,6 +217,10 @@ if __name__ == "__main__":
     bach = ms.converter.parse(path + "bach_846.mid")
     # Encodes the first hand of bach
     notes_encoded = encode(bach[0])
+    print("\nSee below an example of an encoded notes\n")
+    print(notes_encoded[10])
+    print("\nOur network will learn the pattern that a sequence of these vectors follow in time,",
+        "although we will probably not use the last component (tempo)")
     # Decodes it
     bach_decoded = decode(notes_encoded)
     # Saves and compares
