@@ -1,0 +1,16 @@
+\beamer@endinputifotherversion {3.36pt}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Objective}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Motivation}{9}{0}{1}
+\beamer@sectionintoc {2}{Data}{10}{0}{2}
+\beamer@subsectionintoc {2}{1}{Data Format}{10}{0}{2}
+\beamer@subsectionintoc {2}{2}{Dataset/s}{13}{0}{2}
+\beamer@sectionintoc {3}{Encoding}{14}{0}{3}
+\beamer@subsectionintoc {3}{1}{General Thoughts}{14}{0}{3}
+\beamer@subsectionintoc {3}{2}{Notes}{18}{0}{3}
+\beamer@subsectionintoc {3}{3}{Rests and Holds}{21}{0}{3}
+\beamer@subsectionintoc {3}{4}{Multivoice polyphony}{29}{0}{3}
+\beamer@sectionintoc {4}{Neural Network stuff}{30}{0}{4}
+\beamer@sectionintoc {5}{Conclusions}{31}{0}{5}
+\beamer@subsectionintoc {5}{1}{Mmmm}{31}{0}{5}
+\beamer@subsectionintoc {5}{2}{The End}{32}{0}{5}

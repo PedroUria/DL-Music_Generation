@@ -1,0 +1,262 @@
+\documentclass[pdf]{beamer}
+
+\usepackage{harmony}  % Music stuff % https://martin-thoma.com/how-to-write-music-with-latex/
+\usepackage{hyperref}  % For links stuff
+%\usepackage{listings}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+
+\mode<presentation>{\usetheme{Warsaw}\usecolortheme{orchid}}
+\beamertemplatenavigationsymbolsempty
+
+\title[Same title or shortened]{Some cool title}
+
+\author[Aaron A. Gauthier, Avijeet Kartikay and Pedro Uria Rodriguez]{Aaron A. Gauthier,  Avijeet Kartikay and Pedro Uria Rodriguez \\ \vspace{2mm}
+Machine Learning II \\ \vspace{2mm}
+ GWU}
+
+\date{April 24, 2019}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Table of Contents}
+\tableofcontents
+\end{frame}
+
+%\begin{frame}{Table of Contents}
+%\tableofcontents[part=2]
+%\end{frame}
+
+
+% -------------------------------------------------------------------------------- %
+
+%\part{1}
+
+\section{Introduction}
+
+\subsection{Objective}
+
+\begin{frame}{Automatic Music Generation}
+
+TODO
+
+\begin{itemize}
+\item Mmmm
+\pause
+\item Woooo
+ \pause
+ 
+ \vspace{3mm}
+And sooo..
+ \vspace{3mm}
+
+\pause
+\item Yeahhh
+\pause
+\item lolll
+\pause
+\item Heh
+\end{itemize}
+  
+\end{frame}
+
+\subsection{Motivation}
+
+\begin{frame}{Motivation}
+
+TODO
+
+\end{frame}
+
+%-----------------------------------------------------------%
+
+\section{Data}
+
+\subsection{Data Format}
+
+\begin{frame}{MIDI}
+
+\begin{itemize}
+\item Protocol that stores music data and metadata, and allows different instruments and software to communicate with each other. \\
+\vspace{5mm}
+\pause
+\noindent It is made up by a series of events, with info regarding:
+\pause
+\item Location in time
+\item Duration in time
+\item Pitch, intensity and tempo
+\item Other metadata
+\end{itemize}
+
+
+\end{frame}
+
+\subsection{Dataset/s}
+
+\begin{frame}{Data Sources}
+
+TODO
+
+\end{frame}
+
+%-----------------------------------------------------------%
+
+\section{Encoding}
+
+\subsection{General Thoughts}
+
+\begin{frame}{Overview}
+
+\begin{itemize}
+\item MIDI files provide us with more info than we need
+\pause
+\item We are going to use a many-hot encoding approach \\
+\pause
+\vspace{2mm}
+Thus...
+\pause
+\item Tempo will not be encoded: Too many possible values
+\item Intensity will not be encoded: Same reason \\
+\end{itemize}
+We are essentially losing expressiveness info in order to reduce the complexity of the network.
+
+\end{frame}
+
+\subsection{Notes}
+
+\begin{frame}{Many-one-hot Encoding}
+\begin{itemize}
+\item Python's \texttt{music21} library to read \texttt{.mid} files.
+\item Preprocess the \texttt{stream} objects to get the data for the time events.
+\end{itemize}
+\pause
+\begin{figure}[ht]
+   \begin{center}
+       \includegraphics[width=
+               \textwidth]{keyboard.jpg}
+  \end{center}
+  \end{figure}
+
+\hspace{15mm} $ \bar{p}_t = [0, 0, ....., 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, ..., 0]  $
+\pause
+\begin{itemize}
+\item Create a sequence where each input vector $\bar{p}_t$ corresponds to the duration of the shortest note on the piece/s: \\
+
+Time Step $ \equiv \Delta_t = t_1 - t_0 = t_2 - t_1 = ... $
+\end{itemize}
+
+\end{frame}
+
+\subsection{Rests and Holds}
+
+\begin{frame}{Two extra dimensions}
+\begin{itemize}
+\item Rests are essential to music. Add component \#88 to encode rests.
+\pause
+\item If a note is longer than the time step, it will be split into more than one vector. Suppose we have:
+\end{itemize}
+\pause
+time step  $=$  \Vier, event at $t_i =$ \Halb \hspace{2mm} \pause $\Rightarrow \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ....]$ \pause and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ....] = \bar{p}_{t_i}$ \pause $\Rightarrow$  \Vier \hspace{0.5mm}  \Vier \hspace{1mm} $\neq$ \Halb \hspace{2mm} \\
+
+\pause
+\begin{itemize}
+\item Add \textit{hold} component \#89, which indicates that the notes played at a time event shall be held. We end up with:
+\end{itemize}
+\pause 
+$ \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ...., 1],  \bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ...., 0] \Rightarrow$ \Halb. 
+
+\end{frame}
+
+\subsection{Multivoice polyphony}
+
+\begin{frame}{Combining Melody \& Harmony}
+
+TODO
+
+\end{frame}
+
+\section{Neural Network stuff}
+
+\begin{frame}{hhh}
+
+TODO
+
+\end{frame}
+
+%-----------------------------------------------------------%
+
+\section{Conclusions}
+
+\subsection{Mmmm}
+
+\begin{frame}{Whatever}
+
+Something 
+
+%\subsection{Decision Tree}
+%\begin{frame}{Simplest Easiest Decision Tree}
+%\begin{figure}[ht]
+ %   \begin{center}
+ %       \includegraphics[width=0.55
+%        \textwidth]{finaltree}
+ %   \end{center}
+ %   \end{figure}
+%\end{frame}
+
+\end{frame}
+
+\subsection{The End}
+
+\begin{frame}{Happy Music Generation!}
+
+Some cool pic!
+
+\end{frame}
+
+\end{document}
+
+
+
+%\subsection{Domain Knowledge}
+
+%\begin{frame}{Mushroom Features}
+%\begin{columns}
+%\begin{column}{0.5\textwidth}
+%\begin{figure}[ht]
+ %   \begin{center}
+ %       \includegraphics[width=0.7\textwidth]{1797-09-03_Agaricus_campestris_Plate_by_James_Sowerby.jpg}
+ %   \end{center}
+   % \end{figure}
+   % \end{column}
+%\begin{column}{0.5\textwidth}
+%\begin{figure}[ht]
+  %  \begin{center}
+    %    \includegraphics[width=1\textwidth]{k208z0y.png}
+  %  \end{center}
+   % \end{figure}
+%Go to the \href{https://github.com/QuirkyDataScientist1978/GWU-Machine-Learning-1-Fall-2018-Mushroom-Classification-Project/blob/master/mushrooms.ipynb}{jupyter notebook} for an explanation of each of them. 
+%\end{column}
+%\end{columns}
+%\end{frame}
+
+
+
+%-----------------------------------------------------------%
+
+
+
+
+
+
+%\begin{frame}{References}
+%\begin{thebibliography}{1}
+%\bibitem{latexcompanion} 
+%Sebastian Raschka and Vahid Mirjalili. 
+%\textit{Python Machine Learning}. 
+%Packt, Birmingham, 2017
+
+ 
+%\vspace{5mm}
+%Github Repository: \footnotesize\url{https://github.com/PedroUria/DL-Music_Generation}
+%\end{frame}
