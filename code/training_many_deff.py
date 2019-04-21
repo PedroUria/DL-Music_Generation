@@ -6,6 +6,7 @@ import torch.nn as nn
 from encoder_decoder import encode, decode
 import matplotlib.pyplot as plt
 from time import time
+from random import randint
 # NOTE: If you run this on the cloud (you should), you will need to download the files this code
 # generates to evaluate them and compare with the original file/s.
 # Use: scp -i ~/.ssh/my-ssh-key [USERNAME]@[IP_ADDRESS]:[REMOTE_FILE_PATH] [LOCAL_FILE_PATH] to do so
@@ -67,12 +68,13 @@ def get_right_hand(midi_file, time_step=0.05):
     return right_notes
 
 
-def load(author, subgenre, number):
+def load(author, subgenre, number, time_step=0.25):
     """
     Loads the given musical pieces
     :param author: Author's name
     :param subgenre: Genre
     :param number: Number of pieces to load
+    :param time_step: Duration of each vector
     :return: Dictionary containing the encoded files
     """
 
@@ -81,11 +83,13 @@ def load(author, subgenre, number):
     encoded_notes = {}
 
     for i in range(len(songs)):
-        encoded_notes[i] = get_right_hand(songs[i], time_step=0.25)  # Encodes the right hand of the piece
+        encoded_notes[i] = get_right_hand(songs[i], time_step=time_step)  # Encodes the right hand of the piece
         encoded_notes[i] = encoded_notes[i][:, :-1]  # Gets rid of the tempo dimension and prepares the input
         encoded_notes[i] = torch.from_numpy(encoded_notes[i].reshape(-1, 1, 89)).float().cuda()  # as tensor
         print("File number", i, "loaded")
     print("The loading process took", round(time() - start), "seconds")
+
+    print(songs)
 
     return encoded_notes
 
@@ -151,7 +155,6 @@ def train_lstm_loss_only_last(seq_len, hidden_size=89, lr=0.01, n_epochs=100):
     ll = []  #  Stores the mean loss per epoch
     wait_10 = 0  #  We will halve the learning rate if the loss does not decrease in the last 10 epochs
     len_piece = []
-    # batch_size = len(songs)
     for nts in notes_encoded.values():
         len_piece.append(nts.shape[0])
     n_seq = min(len_piece) - seq_len - 1
@@ -310,7 +313,7 @@ def ltsm_gen(net, seq_len, file_name, sampling_index=0, n_steps=100, hidden_size
             if y_pred[:, idx] > 0.9:
                 choose[:, :, idx] = 1
                 chosen = True
-                if y_pred[:, -1] <= 0.7:  # We add a hold condition, in case the probability
+                if y_pred[:, -1] >= 0.7:  # We add a hold condition, in case the probability
                     choose[:, :, -1] = 1  # of having a hold is close to the one of having the pitch
         if not chosen:  # If no dimension is greater than 0.9
             if print_first:
@@ -374,7 +377,7 @@ def ltsm_gen(net, seq_len, file_name, sampling_index=0, n_steps=100, hidden_size
     gen_midi.write("midi", file_name + ".mid")
 
 
-def ltsm_gen_v2(net, seq_len, file_name, n_steps=100, hidden_size=89, time_step=0.05):
+def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=89, time_step=0.05):
 
     """
     Uses the trained LSTM to generate new notes and saves the output to a MIDI file
@@ -384,6 +387,8 @@ def ltsm_gen_v2(net, seq_len, file_name, n_steps=100, hidden_size=89, time_step=
     :param net: Trained LSTM
     :param seq_len: Length of input sequence
     :param file_name: Name to be given to the generated MIDI file
+    :param sampling_idx: File to get the input sequence from, out of the pieces used to train
+    the LSTM. This parameter will change over time, to use notes from multiple pieces
     :param n_steps: Number of vectors to generate
     :param hidden_size: Hidden size of the trained LSTM
     :param time_step: Vector duration. Should be the same as the one on get_right_hand()
@@ -391,12 +396,13 @@ def ltsm_gen_v2(net, seq_len, file_name, n_steps=100, hidden_size=89, time_step=
     """
 
     notes = []  # Will contain a sequence of the predicted notes
-    sampling_idx = 0
+    sampling_idx = 0  # To sample from one of the pieces used to train the network
     x = notes_encoded[sampling_idx][0:1, :, :]  # First note of the piece
     notes.append(x.cpu().numpy())  # Saves the first note
     h_state = torch.zeros(1, 1, hidden_size).float().cuda()
     c_state = torch.zeros(1, 1, hidden_size).float().cuda()
     print_first = True
+    change_note = False
     for _ in range(n_steps):
         chosen = False  # To account for when no dimension's probability is bigger than 0.9
         y_pred, h_c_state = net(x, (h_state, c_state))
@@ -408,7 +414,7 @@ def ltsm_gen_v2(net, seq_len, file_name, n_steps=100, hidden_size=89, time_step=
             if y_pred[:, idx] > 0.9:
                 choose[:, :, idx] = 1
                 chosen = True
-                if y_pred[:, -1] <= 0.7:  # We add a hold condition, in case the probability
+                if y_pred[:, -1] >= 0.7:  # We add a hold condition, in case the probability
                     choose[:, :, -1] = 1  # of having a hold is close to the one of having the pitch
         if not chosen:
             if print_first:
@@ -438,59 +444,83 @@ def ltsm_gen_v2(net, seq_len, file_name, n_steps=100, hidden_size=89, time_step=
             x = x_new.cuda()
             notes.append(choose)
 
-        # TODO: Add condition so it doesn't get stuck....!
+        # Condition so that the generation does not
+        # get stuck on a particular sequence
 
-        #if _ % (seq_len//2) == 0 and x_new.shape[0] > seq_len//2 + 2:
-        #    if sampling_idx >= len(notes_encoded):
-        #        sampling_idx = 0
-        #    st = randint(1, 100)
-        #    for i in range(1, seq_len//2):
-        #        x_new[-i] = notes_encoded[sampling_idx][st+i, :, :]
-        #    sampling_idx += 1
-        #    x = x_new.cuda()
+        #def n():
+        if _ % seq_len == 0:
+            if sampling_idx >= len(notes_encoded):
+                sampling_idx = 0
+                change_note = True
+            st = randint(1, 100)
+            if change_note:
+                x_new[-1] = notes_encoded[sampling_idx][st, :, :]
+                change_note = False
+            else:
+                x_new[-1] = notes_encoded[sampling_idx][0, :, :]
+            sampling_idx += 1
+            x = x_new.cuda()
 
-        #if _ % seq_len == 0:
-        #    if sampling_idx >= len(notes_encoded):
-        #        sampling_idx = 0
-        #        change_note = True
-        #    if change_note:
-        #        x_new[-1] = notes_encoded[sampling_idx][np.random.randint(1, 100, size=1)[0], :, :]
-        #        change_note = False
-        #    else:
-        #        x_new[-1] = notes_encoded[sampling_idx][0, :, :]
-        #    sampling_idx += 1
-        #    x = x_new.cuda()
+        # Condition so that the generation does not
+        # get stuck on a particular note
+        if _ > 2:
+            if (notes[-1] == notes[-2]).sum(2)[0][0].numpy() == 89:
+                if (notes[-1] == notes[-3]).sum(2)[0][0].numpy() == 89:
+                    if (notes[-1] == notes[-4]).sum(2)[0][0].numpy() == 89:
+                        if (notes[-1] == notes[-5]).sum(2)[0][0].numpy() == 89:
+                            if (notes[-1] == notes[-6]).sum(2)[0][0].numpy() == 89:
+                                for m in range(5):
+                                    notes.pop(-1)
+                                if sampling_idx >= len(notes_encoded):
+                                    sampling_idx = 0
+                                x_new[-1] = notes_encoded[sampling_idx][randint(1, 100), :, :]
+                                x = x_new.cuda()
+                                sampling_idx += 1
+
 
     # Gets the notes into the correct NumPy array shape
     gen_notes = np.empty((len(notes)-seq_len+1, 89))  # Doesn't use the first predicted notes
     for idx, nt in enumerate(notes[seq_len-1:]):  # Because at first this will be inaccurate
-        gen_notes[idx] = nt[0]  # until an input of seq_len number of sequences is obtained
+        gen_notes[idx] = nt[0]
 
     # Decodes the generated music and saves it as a MIDI file
     gen_midi = decode(gen_notes, time_step=time_step)
-    gen_midi.write("midi", file_name + ".mid")
+    # Gets rid of too many rests
+    stream = ms.stream.Stream()
+    for idx, nt in enumerate(gen_midi):
+        if type(nt) == ms.note.Rest and idx < len(gen_midi) - 5:
+            if nt.duration.quarterLength > 4*time_step:
+                print("Removing rest")
+                continue
+            if type(gen_midi[idx + 4]) == ms.note.Rest:
+                print("Removing rest")
+                continue
+            stream.append(nt)
+        else:
+            stream.append(nt)
 
+    stream.write("midi", file_name + ".mid")
+
+
+# -------------
+# Some Attempts
+# -------------
 
 # notes_encoded = load("mozart", "sonata", 10)
-
 # net, l, ll = train_lstm_loss_whole_seq(50, hidden_size=89, n_epochs=100, lr=0.01)
 # torch.save(net.state_dict(), 'lstm_whole_seq_v2_mozart_50.pkl')
 # net = LSTMMusic(89, 89).cuda()
-# torch.save(net.state_dict(), 'lstm_whole_seq_v2_mozart_50.pkl')
 # net.load_state_dict(torch.load("lstm_whole_seq_v2_mozart_50.pkl"))
 # net.eval()
-# This one doesn't do so well:
-# ltsm_gen(net, 50, "mozart_v2", hidden_size=89, time_step=0.25, n_steps=200)  # 
-# The following stuff gives decent results: TODO: Fix too many rests
-# ltsm_gen_v2(net, 50, "mozart_v2", hidden_size=89, time_step=0.25, n_steps=400)
+# ltsm_gen_v2(net, 50, "mozart", hidden_size=89, time_step=0.25, n_steps=400)
 
+# notes_encoded = load("mozart", "sonata", 10)
 # net, l, ll = train_lstm_loss_whole_seq(50, hidden_size=160, lr=0.02, n_epochs=100, use_n_seq=30)
 # torch.save(net.state_dict(), 'lstm_whole_seq_mozart_50.pkl')
 # net = LSTMMusic(89, 160).cuda()
-# net.load_state_dict(torch.load("lstm_whole_seq_mozart_50.pkl"))  #
+# net.load_state_dict(torch.load("lstm_whole_seq_mozart_50.pkl"))
 # net.eval()
-# ltsm_gen_v2(net, 50, "mozart_v2", hidden_size=160, time_step=0.25, n_steps=400)
-# ltsm_gen(net, 50, "mozart_v2", hidden_size=160, time_step=0.25, n_steps=200)
+# ltsm_gen_v2(net, 50, "mozart_1", hidden_size=160, time_step=0.25, n_steps=400)
 
 # notes_encoded = load("bach", "unknown", 4)
 # net, l, ll = train_lstm_loss_whole_seq(28, hidden_size=160, lr=0.01, n_epochs=100, use_all_seq=True)
@@ -498,5 +528,14 @@ def ltsm_gen_v2(net, seq_len, file_name, n_steps=100, hidden_size=89, time_step=
 # net = LSTMMusic(89, 160).cuda()
 # net.load_state_dict(torch.load("lstm_whole_seq_bach.pkl"))
 # net.eval()
-# ltsm_gen(net, 50, "bach_v2", hidden_size=160, time_step=0.25, n_steps=200)  # 01
-# ltsm_gen_v2(net, 28, "bach_v2", hidden_size=160, time_step=0.25, n_steps=400)  # 02
+# ltsm_gen_v2(net, 28, "bach", hidden_size=160, time_step=0.25, n_steps=400)
+
+
+# notes_encoded = load("mendelssohn", "romantic", 10)
+# net, l, ll = train_lstm_loss_whole_seq(50, hidden_size=89, n_epochs=100, lr=0.01)
+# torch.save(net.state_dict(), 'lstm_whole_seq_mendelssohn_50.pkl')
+# net = LSTMMusic(89, 89).cuda()
+# net.load_state_dict(torch.load("lstm_whole_seq_mendelssohn_50.pkl"))
+# net.eval()
+# ltsm_gen_v2(net, 50, "mendelssohn_v2", hidden_size=89, time_step=0.25, n_steps=1000)
+
