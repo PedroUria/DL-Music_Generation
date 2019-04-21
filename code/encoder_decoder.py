@@ -44,10 +44,10 @@ def encode(hand, time_step=0.05):
     # Encodes all the music
     # This flag will be used to only get the tempo of the beginning of the piece
     temp_flag = True  # And assign this tempo to all the notes in the piece
-    idx = -1  # To only append notes, rests or chords
+    idx = -1  # To only append notes, rests or chords
     for nt in hand:
         if type(nt) == ms.note.Note or type(nt) == ms.note.Rest or type(nt) == ms.chord.Chord:
-            idx = int(nt.offset/time_step)  # Temporal index
+            idx = int(nt.offset/time_step)  # Temporal index
         # Tempo Encoding
         if temp_flag:
             if type(nt) == ms.tempo.MetronomeMark:
@@ -56,7 +56,7 @@ def encode(hand, time_step=0.05):
         if idx >= 0:
             # Loops over the duration of the note (if a note is 32nd
             # we need to put this note in two consecutive vector)
-            n_vectors = int(nt.duration.quarterLength/time_step)  # 0.33 will be 6 vectors
+            n_vectors = int(nt.duration.quarterLength/time_step)  # 0.33 will be 6 vectors
             # when the actual number would be 0.33/0.05 = 6.6 vectors
             for i in range(n_vectors):
                 # Note encoding: one/many-hot encoding
@@ -69,9 +69,12 @@ def encode(hand, time_step=0.05):
                 if type(nt) == ms.chord.Chord:
                     for freqs in [nts.frequency for nts in nt.pitches]:
                         notes[idx + i, :87] += (notes_freq == freqs)*1
-                # Hold Encoding: If the duration of the note is longer than 16th
+                # Hold Encoding: If the duration of the note is longer than time_step
                 notes[idx + i, 88] = 1
-            notes[idx + i, 88] = 0
+            try:
+                notes[idx + i, 88] = 0
+            except:
+                notes[idx + i - 2, 88] = 0
         idx = -1
             
     return notes

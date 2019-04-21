@@ -98,7 +98,7 @@ class LSTMMusic(nn.Module):
 # ----------------------------
 
 
-def train_lstm_loss_whole_seq(seq_len, hidden_size=89, lr=0.01):
+def train_lstm_loss_whole_seq(seq_len, hidden_size=89, lr=0.01, n_epochs=100):
 
     """
     Training function where we compare all outputs to get the loss
@@ -117,17 +117,16 @@ def train_lstm_loss_whole_seq(seq_len, hidden_size=89, lr=0.01):
     loss_func = nn.BCELoss()  # Because we are using sigmoid and not softmax, BCELoss is the right choice
     h_state = torch.zeros(1, 1, hidden_size).float().cuda()  #  Initializes the hidden
     c_state = torch.zeros(1, 1, hidden_size).float().cuda()  #  and cell states
-    seq_len = 1  # We will take as input only the previous note
     l = []  # Stores the loss per sequence
     lll = []  # Idem, but will be set to [] after each epoch for ll
     ll = []  #  Stores the mean loss per epoch
     wait_10 = 0  #  We will halve the learning rate if the loss does not decrease in the last 10 epochs
-    for epoch in range(100):
+    for epoch in range(n_epochs):
         print("---------- epoch number:", epoch, "----------")
         for step in range(notes_encoded.shape[0] // seq_len - 1):
             x = notes_encoded[step:seq_len+step, :, :]  # We take as input the last seq_len notes
             x.requires_grad = True
-            y = notes_encoded[step+1:seq_len+step+1, :, :]  #  Uses the whole next sequence to get the loss
+            y = notes_encoded[step+1:seq_len+step+1, :, :]  # Uses the whole next sequence to get the loss
             y_pred, h_c_state = net(x, (h_state, c_state))
             # Repacks the hidden state, break the connection from last iteration
             h_state, c_state = h_c_state[0].data, h_c_state[1].data
@@ -169,7 +168,6 @@ def train_lstm_loss_only_last(seq_len, hidden_size=89, lr=0.01):
     loss_func = nn.BCELoss()  # Because we are using sigmoid and not softmax, BCELoss is the right choice
     h_state = torch.zeros(1, 1, hidden_size).float().cuda()  #  Initializes the hidden
     c_state = torch.zeros(1, 1, hidden_size).float().cuda()  #  and cell states
-    seq_len = 1  # We will take as input only the previous note
     l = []  # Stores the loss per sequence
     lll = []  # Idem, but will be set to [] after each epoch for ll
     ll = []  #  Stores the mean loss per epoch
@@ -248,7 +246,7 @@ def plot_loss(l, ll):
 # ------------------------------------------
 
 
-def ltsm_gen(net, seq_len, file_name, n_steps=100, hidden_size=89):
+def ltsm_gen(net, seq_len, file_name, n_steps=100, hidden_size=89, time_step=0.05):
 
     """ Uses the trained net to generate new notes
      and saves the output to a MIDI file """
@@ -280,7 +278,7 @@ def ltsm_gen(net, seq_len, file_name, n_steps=100, hidden_size=89):
             print(_, y_pred[:, np.argmax(y_pred.cpu())])  # Maximum probability out of all components
         x_new = torch.empty(x.shape)  # Uses the output of the last time_step
         for idx, nt in enumerate(x[1:]):  # As the input for the next time_step
-          x_new[idx] = nt  # So the new sequence will be the same past sequence minus the first note
+            x_new[idx] = nt  # So the new sequence will be the same past sequence minus the first note
         x_new[-1] = choose  # of such past sequence, and plus the predicted note from this iteration
         x = x_new.cuda()  # We will use this new sequence to predict in the next iteration the next note
         notes.append(choose)  # Saves the predicted note
@@ -291,7 +289,7 @@ def ltsm_gen(net, seq_len, file_name, n_steps=100, hidden_size=89):
         gen_notes[idx] = nt[0]
 
     # Decodes the generated music and saves it as a MIDI file
-    gen_midi = decode(gen_notes, time_step=0.25)
+    gen_midi = decode(gen_notes, time_step=time_step)
     gen_midi.write("midi", file_name + ".mid")
 
 
@@ -335,70 +333,27 @@ def ltsm_gen(net, seq_len, file_name, n_steps=100, hidden_size=89):
 # net, l, ll = train_lstm_loss_only_last(14)
 
 #        Last printed outputs:
-# Halving learning rate from 0.00015625 to 7.8125e-05
-# ---------- epoch number: 96 ----------
-#            loss: 0.0019719508
-# ---------- epoch number: 97 ----------
-#            loss: 0.0019400126
-# ---------- epoch number: 98 ----------
-#            loss: 0.0020212487
+# Halving learning rate from 0.005 to 0.0025
+# ---------- epoch number: 72 ----------
+#            loss: 0.0017278532
+#                  .
+#                  .
+#                  .
 # ---------- epoch number: 99 ----------
-#            loss: 0.0018858702
-#
-# The training process took 259.77 seconds
+#            loss: 0.0010551634
+
+# The training process took 23.44 seconds
 
 # plot_loss(l, ll)
-# ltsm_gen(net, 14, "come_on_14")
-
-# Printing out the maximum prob of all notes for a time step when this maximum prob is less than 0.9
-# 1 tensor([0.2026], device='cuda:0')
-# 9 tensor([0.8846], device='cuda:0')
-# 10 tensor([0.5311], device='cuda:0')
-# 17 tensor([0.4089], device='cuda:0')
-# 18 tensor([0.2395], device='cuda:0')
-# 25 tensor([0.5659], device='cuda:0')
-# 26 tensor([0.5373], device='cuda:0')
-# 27 tensor([0.6656], device='cuda:0')
-# 30 tensor([0.8938], device='cuda:0')
-# 33 tensor([0.8757], device='cuda:0')
-# 34 tensor([0.7825], device='cuda:0')
-# 35 tensor([0.6821], device='cuda:0')
-# 41 tensor([0.8666], device='cuda:0')
-# 42 tensor([0.6907], device='cuda:0')
-# 43 tensor([0.6226], device='cuda:0')
-# 49 tensor([0.8621], device='cuda:0')
-# 50 tensor([0.6955], device='cuda:0')
-# 51 tensor([0.6225], device='cuda:0')
-# 57 tensor([0.8620], device='cuda:0')
-# 58 tensor([0.6957], device='cuda:0')
-# 59 tensor([0.6225], device='cuda:0')
-# 65 tensor([0.8620], device='cuda:0')
-# 66 tensor([0.6957], device='cuda:0')
-# 67 tensor([0.6225], device='cuda:0')
-# 73 tensor([0.8620], device='cuda:0')
-# 74 tensor([0.6957], device='cuda:0')
-# 75 tensor([0.6225], device='cuda:0')
-# 81 tensor([0.8620], device='cuda:0')
-# 82 tensor([0.6957], device='cuda:0')
-# 83 tensor([0.6225], device='cuda:0')
-# 89 tensor([0.8620], device='cuda:0')
-# 90 tensor([0.6957], device='cuda:0')
-# 91 tensor([0.6225], device='cuda:0')
-# 97 tensor([0.8620], device='cuda:0')
-# 98 tensor([0.6957], device='cuda:0')
-# 99 tensor([0.6225], device='cuda:0')
-
-# Now the sequence becomes repeated...
-# let's try with a longer sequence
+# ltsm_gen(net, 14, "come_on_14_14")
+# Gets the first sequence but becomes stuck
 
 # ------------------------------------------
-# Let's do the same with a seq_len = 14
-# and double the number of neurons on the
-# LSTM Layer
+# Let's do the same with a seq_len = 28
 # ------------------------------------------
 
-print("\nDoing the same as before, but with 178 hidden neurons instead of 89\n")
-net, l, ll = train_lstm_loss_only_last(28)
+# print("\nUsing a 1 seq length for training and 28 for generating\n")
+# net, l, ll = train_lstm_loss_only_last(1)
 #        Last printed outputs:
 # Halving learning rate from 0.0003125 to 0.00015625
 # ---------- epoch number: 92 ----------
@@ -420,8 +375,8 @@ net, l, ll = train_lstm_loss_only_last(28)
 #
 # The training process took 260.6 seconds
 
-plot_loss(l, ll)
-ltsm_gen(net, 28, "come_on_28")
+# plot_loss(l, ll)
+# ltsm_gen(net, 28, "come_on_28")
 
 # Printing out the maximum prob of all notes for a time step when this maximum prob is less than 0.9
 # 9 tensor([0.4616], device='cuda:0')
@@ -445,7 +400,105 @@ ltsm_gen(net, 28, "come_on_28")
 
 # Much much better, check come_on_28.mid!
 
-# TODO: Before using many files, we should figure out if there is a way to get
-# reproducible results (random seed), but I do not think there is, given the
-# nature of LSTMs. Also, need to figure out doing mini-batching, and maybe get
-# a better optimizer
+
+# net, l, ll = train_lstm_loss_only_last(28)
+# Halving learning rate from 0.01 to 0.005
+# ---------- epoch number: 43 ----------
+#            loss: 0.008907785
+#                   .
+#                   .
+#                   .
+# ---------- epoch number: 99 ----------
+#            loss: 0.0020988078
+#
+# The training process took 14.13 seconds
+# plot_loss(l, ll)
+# ltsm_gen(net, 28, "come_on_28_28")
+# Printing out the maximum prob of all notes for a time step when this maximum prob is less than 0.9
+# 2 tensor([0.6192], device='cuda:0')
+# 9 tensor([0.5222], device='cuda:0')
+# 17 tensor([0.5232], device='cuda:0')
+# 25 tensor([0.5232], device='cuda:0')
+# 33 tensor([0.5232], device='cuda:0')
+# 41 tensor([0.5232], device='cuda:0')
+# 49 tensor([0.5232], device='cuda:0')
+# 57 tensor([0.5232], device='cuda:0')
+# 65 tensor([0.5232], device='cuda:0')
+# 73 tensor([0.5232], device='cuda:0')
+# 81 tensor([0.5232], device='cuda:0')
+# 89 tensor([0.5232], device='cuda:0')
+# 97 tensor([0.5232], device='cuda:0')
+
+# Again, stuck...
+
+
+def ltsm_gen_v2(net, seq_len, file_name, n_steps=100, hidden_size=89, time_step=0.05):
+
+    """ Uses the trained net to generate new notes
+     and saves the output to a MIDI file """
+
+    notes = []  # Will contain a sequence of the predicted notes
+    x = notes_encoded[:seq_len]
+    for nt in x:
+        notes.append(nt.cpu().numpy())
+    h_state = torch.zeros(1, 1, hidden_size).float().cuda()
+    c_state = torch.zeros(1, 1, hidden_size).float().cuda()
+    print_first = True
+    for _ in range(n_steps):
+        chosen = False  # To account for when no dimension's probability is bigger than 0.9
+        y_pred, h_c_state = net(x, (h_state, c_state))
+        h_state, c_state = h_c_state[0].data, h_c_state[1].data
+        y_pred = y_pred.data
+        y_pred = y_pred[-1]  # We only care about the last predicted note (next note after last note of input sequence)
+        choose = torch.zeros((1, 1, 89))  # Coverts the probabilities to the actual note vector
+        for idx in range(89):
+            if y_pred[:, idx] > 0.9:
+                choose[:, :, idx] = 1
+                chosen = True
+        if not chosen:
+            if print_first:
+                print("\nPrinting out the maximum prob of all notes for a time step",
+                      "when this maximum prob is less than 0.9")
+                print_first = False
+            choose[:, :, np.argmax(y_pred.cpu())] = 1
+            print(_, y_pred[:, np.argmax(y_pred.cpu())])  # Maximum probability out of all components
+        x_new = torch.empty(x.shape)  # Uses the output of the last time_step
+        for idx, nt in enumerate(x[1:]):  # As the input for the next time_step
+            x_new[idx] = nt  # So the new sequence will be the same past sequence minus the first note
+        x_new[-1] = choose  # of such past sequence, and plus the predicted note from this iteration
+        x = x_new.cuda()  # We will use this new sequence to predict in the next iteration the next note
+        notes.append(choose)  # Saves the predicted note
+
+    # Gets the notes into the correct NumPy array shape
+    gen_notes = np.empty((len(notes), 89))
+    for idx, nt in enumerate(notes):
+        gen_notes[idx] = nt[0]
+
+    # Decodes the generated music and saves it as a MIDI file
+    gen_midi = decode(gen_notes, time_step=time_step)
+    gen_midi.write("midi", file_name + ".mid")
+
+
+# net, l, ll = train_lstm_loss_whole_seq(28)
+# plot_loss(l, ll)
+# ltsm_gen_v2(net, 28, "come_on_28_1", n_steps=500)
+# Good result
+# ltsm_gen(net, 28, "come_on_28_1", n_steps=500)
+# Also very good result, only using 1 note!!!
+
+# TODO: Mini-batching, and maybe get
+
+
+# Encodes the first hand of bach
+notes_encoded = get_right_hand(files_by_author["beethoven"][-1], time_step=0.1)
+notes_encoded = notes_encoded[:, :-1]  # Gets rid of the tempo dimension
+# Reshapes to the suitable form to input on the LSTM
+notes_encoded = torch.from_numpy(notes_encoded.reshape(-1, 1, 89)).float().cuda()
+
+net, l, ll = train_lstm_loss_whole_seq(100, n_epochs=200)
+#plot_loss(l, ll)
+ltsm_gen_v2(net, 100, "elise_28_28", n_steps=500, time_step=0.1)
+
+
+
+# print(files_by_author_and_subgenre["chopin"]["prelude"]
