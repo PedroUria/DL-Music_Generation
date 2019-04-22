@@ -1,5 +1,6 @@
 import music21 as ms
 
+
 def combine(left, right, filepath='test.mid'):
     """
     Input: left - the stream of notes played by the 
@@ -17,7 +18,4 @@ def combine(left, right, filepath='test.mid'):
     sc.append(right)
     sc.append(left)
     left.offset = 0.0
-    if save:
-        sc.write("midi", filepath)
-    else:
-        return sc       
+    sc.write("midi", filepath)
