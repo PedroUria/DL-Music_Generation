@@ -150,7 +150,7 @@ class LSTMMusic(nn.Module):
     by a fully connected Output Layer with a Sigmoid activation function
     """
 
-    def __init__(self, input_size, hidden_size, num_layers, dropout):
+    def __init__(self, input_size, hidden_size, num_layers=1, dropout=0):
         super(LSTMMusic, self).__init__()
         # Input of shape (seq_len, batch_size, input_size)
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers=num_layers, dropout=dropout)
@@ -369,8 +369,8 @@ def get_tempo_dim_back(notes, tempo=74):
     return c
 
 
-def ltsm_gen(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=178,
-             num_layers=1, time_step=0.05, changing_note=False, note_stuck=False, remove_extra_rests=True):
+def ltsm_gen(net, seq_len, file_name, sampling_idx=0, sequence_start=0, n_steps=100, hidden_size=178,
+             num_layers=1, time_step=0.05, changing_note=False, note_stuck=False, remove_extra_rests=False):
 
     """
     Uses the trained LSTM to generate new notes and saves the output to a MIDI file
@@ -380,6 +380,7 @@ def ltsm_gen(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=1
     :param seq_len: Length of input sequence
     :param file_name: Name to be given to the generated MIDI file
     :param sampling_idx: File to get the input sequence from, out of the pieces used to train the LSTM
+    :param sequence_start: Index of the starting sequence, default to 0
     :param n_steps: Number of vectors to generate
     :param hidden_size: Hidden size of the trained LSTM
     :param num_layers: Number of layers of the trained LSTM
@@ -394,7 +395,7 @@ def ltsm_gen(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=1
     """
 
     notes = []  # Will contain a sequence of the predicted notes
-    x = notes_encoded[sampling_idx][:seq_len]  # Uses the input sequence
+    x = notes_encoded[sampling_idx][sequence_start:sequence_start+seq_len]  # Uses the input sequence
     for nt in x:  # To start predicting. This will be later removed from
         notes.append(nt.cpu().numpy())  # the final output
     h_state = torch.zeros(num_layers, 1, hidden_size).float().cuda()
@@ -532,7 +533,7 @@ def ltsm_gen(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=1
 
 
 def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, note_pos=0, n_steps=100, hidden_size=178,
-                num_layers=1, time_step=0.05, changing_note=False, note_stuck=False, remove_extra_rests=True):
+                num_layers=1, time_step=0.05, changing_note=False, note_stuck=False, remove_extra_rests=False):
 
     """
     Uses the trained LSTM to generate new notes and saves the output to a MIDI file
@@ -705,6 +706,14 @@ def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, note_pos=0, n_steps=100
 # -------------
 # Some Attempts
 # -------------
+
+notes_encoded = load("beethoven", "sonata", 10, time_step=0.2)
+net, l, ll = train_lstm_loss_whole_seq(100, n_epochs=100, lr=0.01)
+torch.save(net.state_dict(), 'beethoven_both_stacked_1.pkl')
+# net = LSTMMusic(178, 178).cuda()
+# net.load_state_dict(torch.load("beethoven_both_stacked_1.pkl"))
+# net.eval()
+ltsm_gen_v2(net, 100, "beethoven_both_stacked_1", sampling_idx=0, time_step=0.2, n_steps=300)
 
 
 # notes_encoded = load("mendelssohn", "romantic", 10)

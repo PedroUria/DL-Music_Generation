@@ -357,7 +357,7 @@ def get_tempo_dim_back(notes, tempo=74):
     return c
 
 
-def ltsm_gen(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=178,
+def ltsm_gen(net, seq_len, file_name, sampling_idx=0, sequence_start=0, n_steps=100, hidden_size=178,
              time_step=0.05, changing_note=False, note_stuck=False, remove_extra_rests=True):
 
     """
@@ -368,6 +368,7 @@ def ltsm_gen(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=1
     :param seq_len: Length of input sequence
     :param file_name: Name to be given to the generated MIDI file
     :param sampling_idx: File to get the input sequence from, out of the pieces used to train the LSTM
+    :param sequence_start: Index of the starting sequence, default to 0
     :param n_steps: Number of vectors to generate
     :param hidden_size: Hidden size of the trained LSTM
     :param time_step: Vector duration. Should be the same as the one on get_right_hand()
@@ -381,7 +382,7 @@ def ltsm_gen(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=1
     """
 
     notes = []  # Will contain a sequence of the predicted notes
-    x = notes_encoded[sampling_idx][:seq_len]  # Uses the input sequence
+    x = notes_encoded[sampling_idx][sequence_start:sequence_start+seq_len]  # Uses the input sequence
     for nt in x:  # To start predicting. This will be later removed from
         notes.append(nt.cpu().numpy())  # the final output
     h_state = torch.zeros(1, 1, hidden_size).float().cuda()
