@@ -3,6 +3,8 @@
 \usepackage{harmony}  % Music stuff % https://martin-thoma.com/how-to-write-music-with-latex/
 \usepackage{hyperref}  % For links stuff
 %\usepackage{listings}
+\usepackage{amsmath} % Some math stuff
+\usepackage{dirtytalk} % Quote
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 
 \mode<presentation>{\usetheme{Warsaw}\usecolortheme{orchid}}
@@ -21,52 +23,41 @@ Machine Learning II \\ \vspace{2mm}
 \maketitle
 
 \begin{frame}{Table of Contents}
-\tableofcontents
+\tableofcontents[part=1]
 \end{frame}
 
-%\begin{frame}{Table of Contents}
-%\tableofcontents[part=2]
-%\end{frame}
+\begin{frame}{Table of Contents}
+\tableofcontents[part=2]
+\end{frame}
 
 
 % -------------------------------------------------------------------------------- %
 
-%\part{1}
+\part{1}
 
 \section{Introduction}
 
 \subsection{Objective}
 
-\begin{frame}{Automatic Music Generation}
-
-TODO
+\begin{frame}{Music Generation System}
 
 \begin{itemize}
-\item Mmmm
+\item Build a Neural Network that can generate new music  \\
 \pause
-\item Woooo
+ \vspace{2mm}
+\hspace{-6mm} Because of the temporal nature of music...
  \pause
- 
- \vspace{3mm}
-And sooo..
- \vspace{3mm}
+ \vspace{2mm}
+ \item We will use LSTM
+ \pause
+ \item We will train on many songs from an author and/or genre
+ \pause
+ \item The ANN will learn the probability distribution of a sequence of notes, i.e, the music
+ \pause
+ \item Using this distribution, we can predict the next note based on an arbitrary number of previous notes
+ \end{itemize}
 
-\pause
-\item Yeahhh
-\pause
-\item lolll
-\pause
-\item Heh
-\end{itemize}
   
-\end{frame}
-
-\subsection{Motivation}
-
-\begin{frame}{Motivation}
-
-TODO
-
 \end{frame}
 
 %-----------------------------------------------------------%
@@ -81,7 +72,7 @@ TODO
 \item Protocol that stores music data and metadata, and allows different instruments and software to communicate with each other. \\
 \vspace{5mm}
 \pause
-\noindent It is made up by a series of events, with info regarding:
+\hspace{-6mm} It is made up by a series of events, with info regarding:
 \pause
 \item Location in time
 \item Duration in time
@@ -96,8 +87,16 @@ TODO
 
 \begin{frame}{Data Sources}
 
-TODO
+\begin{itemize}
+\item Classical Piano Midi Page: \url{http://piano-midi.de/}
+\item Folders Organized by Author and Genre
+\item We want the data to be well organized 
+\item We also have other sources but... \\
+\end{itemize}
 
+\say{How do I go about finding a certain classical work in MIDI format in the Internet? Some MIDI archives in the Internet contain thousands of classical works. You can find the corresponding links to them on my Linkpage. \textbf{The quality of the pieces, however, may vary considerably}} \\
+\vspace{2mm}
+From the author of \url{http://piano-midi.de/}. 
 \end{frame}
 
 %-----------------------------------------------------------%
@@ -172,9 +171,24 @@ $ \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ...., 1],  \bar{p}_{t_{i+1}} = [0, 0, ..
 
 \begin{frame}{Combining Melody \& Harmony}
 
-TODO
+\begin{itemize}
+\item Approach 1: Keep the same number of dimensions by just adding up the vectors from the left and right hands. \pause
+\[\bar{p}_{t_i} = \overbrace{[0, 1, ...., 0, 0, 1]}^{\text{left hand}} + \overbrace{[0, ...., 0, 1, 0, 0]}^{\text{right hand}} = [0, 1, ....., 0, 1, 0, 1 ] \]
+\pause \vspace{-6mm}
+\item Problem: \textit{hold} $=1$ or \textit{hold} $=0$? \pause $\Rightarrow$ Duration of note for each hand is lost.
+\pause
+\item Approach 2: Stack the left and right vectors together horizontally, effectively doubling the number of dimensions.
+\pause
+ \[\bar{p}_{t_i} = \overbrace{[0, 1, ...., 0, 0, 1 |}^{\text{left hand}} \overbrace{0, ...., 0, 1, 0, 0,]}^{\text{right hand}} \] 
+
+\end{itemize}
 
 \end{frame}
+
+%-----------------------------------------------------------%
+
+
+\part{2}
 
 \section{Neural Network stuff}
 
@@ -184,7 +198,16 @@ TODO
 
 \end{frame}
 
+
 %-----------------------------------------------------------%
+
+\section{Experimental Results}
+
+\begin{frame}{hhh}
+
+TODO
+
+\end{frame}
 
 \section{Conclusions}
 
@@ -193,16 +216,6 @@ TODO
 \begin{frame}{Whatever}
 
 Something 
-
-%\subsection{Decision Tree}
-%\begin{frame}{Simplest Easiest Decision Tree}
-%\begin{figure}[ht]
- %   \begin{center}
- %       \includegraphics[width=0.55
-%        \textwidth]{finaltree}
- %   \end{center}
- %   \end{figure}
-%\end{frame}
 
 \end{frame}
 

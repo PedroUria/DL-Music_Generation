@@ -1,15 +1,17 @@
-\BOOKMARK [2][]{Outline0.1}{Introduction}{}% 1
-\BOOKMARK [3][]{Outline0.1.1.3}{Objective}{Outline0.1}% 2
-\BOOKMARK [3][]{Outline0.1.2.9}{Motivation}{Outline0.1}% 3
-\BOOKMARK [2][]{Outline0.2}{Data}{}% 4
-\BOOKMARK [3][]{Outline0.2.1.10}{Data Format}{Outline0.2}% 5
-\BOOKMARK [3][]{Outline0.2.2.13}{Dataset/s}{Outline0.2}% 6
-\BOOKMARK [2][]{Outline0.3}{Encoding}{}% 7
-\BOOKMARK [3][]{Outline0.3.1.14}{General Thoughts}{Outline0.3}% 8
-\BOOKMARK [3][]{Outline0.3.2.18}{Notes}{Outline0.3}% 9
-\BOOKMARK [3][]{Outline0.3.3.21}{Rests and Holds}{Outline0.3}% 10
-\BOOKMARK [3][]{Outline0.3.4.29}{Multivoice polyphony}{Outline0.3}% 11
-\BOOKMARK [2][]{Outline0.4}{Neural Network stuff}{}% 12
-\BOOKMARK [2][]{Outline0.5}{Conclusions}{}% 13
-\BOOKMARK [3][]{Outline0.5.1.31}{Mmmm}{Outline0.5}% 14
-\BOOKMARK [3][]{Outline0.5.2.32}{The End}{Outline0.5}% 15
+\BOOKMARK [1][]{Outline1}{1}{}% 1
+\BOOKMARK [2][]{Outline1.1}{Introduction}{Outline1}% 2
+\BOOKMARK [3][]{Outline1.1.1.4}{Objective}{Outline1.1}% 3
+\BOOKMARK [2][]{Outline1.2}{Data}{Outline1}% 4
+\BOOKMARK [3][]{Outline1.2.1.10}{Data Format}{Outline1.2}% 5
+\BOOKMARK [3][]{Outline1.2.2.13}{Dataset/s}{Outline1.2}% 6
+\BOOKMARK [2][]{Outline1.3}{Encoding}{Outline1}% 7
+\BOOKMARK [3][]{Outline1.3.1.14}{General Thoughts}{Outline1.3}% 8
+\BOOKMARK [3][]{Outline1.3.2.18}{Notes}{Outline1.3}% 9
+\BOOKMARK [3][]{Outline1.3.3.21}{Rests and Holds}{Outline1.3}% 10
+\BOOKMARK [3][]{Outline1.3.4.29}{Multivoice polyphony}{Outline1.3}% 11
+\BOOKMARK [1][]{Outline2}{2}{}% 12
+\BOOKMARK [2][]{Outline2.4}{Neural Network stuff}{Outline2}% 13
+\BOOKMARK [2][]{Outline2.5}{Experimental Results}{Outline2}% 14
+\BOOKMARK [2][]{Outline2.6}{Conclusions}{Outline2}% 15
+\BOOKMARK [3][]{Outline2.6.1.37}{Mmmm}{Outline2.6}% 16
+\BOOKMARK [3][]{Outline2.6.2.38}{The End}{Outline2.6}% 17
