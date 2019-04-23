@@ -110,11 +110,6 @@ def decode(notes_encoded, tempo=74, time_step=0.05):
     # Creates the stream object and appends some default stuff 
     stream = ms.stream.Stream()
     stream.append(ms.instrument.Piano())
-    # Commenting this out for now because we may not be able to use the tempo with our approach...
-    #if notes_encoded[0, -1]:  # If we encode and decode the left hand by separate
-    #    stream.append(ms.tempo.MetronomeMark(number=int(notes_encoded[0, -1])))
-    #else:  # It will have tempo=0, so we need this.
-    #    stream.append(ms.tempo.MetronomeMark(number=tempo))
     stream.append(ms.tempo.MetronomeMark(number=tempo))
     stream.append(ms.key.Key("C"))
     stream.append(ms.meter.TimeSignature())
@@ -126,7 +121,7 @@ def decode(notes_encoded, tempo=74, time_step=0.05):
     
     time_step = time_step
     offset = 0
-    hold = {}  # Will store the duration of the hold for each note
+    hold = {}  # Will store the duration of the hold for each note
     for j, p in enumerate(notes_encoded):
         if p[87]:  # If we have a Rest, do the same as below
             try:
@@ -154,9 +149,9 @@ def decode(notes_encoded, tempo=74, time_step=0.05):
         else:
             # For each note on the vector at time = offset
             for frequ_index in np.nonzero(notes_freq * p[:87])[0]:
-                try:  # If the duration of the hold + offset is longer than the current offset
+                try:  # If the duration of the hold + offset is longer than the current offset
                     if offset < hold[frequ_index]:
-                        continue  # Do not append this note to the stream
+                        continue  # Do not append this note to the stream
                 except:  # As it will be the same note appended on the first previous iteration
                     pass
                 # Gets the pitch for a note in p
@@ -167,13 +162,13 @@ def decode(notes_encoded, tempo=74, time_step=0.05):
                     i = j + 1  # Move onto the next p vector
                     if i < len(notes_encoded) - 1:
                         dur += time_step
-                        while notes_encoded[i][-2]:  # And do so until the hold dissapears
+                        while notes_encoded[i][-2]:  # And do so until the hold disappears
                             dur += time_step
-                            if  i < len(notes_encoded) - 1: # In case thre is a hold on the last note
+                            if i < len(notes_encoded) - 1:  # In case there is a hold on the last note
                                 i += 1
                             else:
                                 break
-                hold[frequ_index] = dur + offset  # Total duration of the hold, from the offset
+                hold[frequ_index] = dur + offset  # Total duration of the hold, from the offset
                 nt.duration = ms.duration.Duration(dur)
                 # Appends to the stream
                 stream.append(nt)
