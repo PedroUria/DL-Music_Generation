@@ -1,6 +1,6 @@
 # Music-Generation
 
-This repo consists on the final proyect by @PedroUria, @QuirkyDataScientist1978 and @thekartikay for our Neural Network class. Below is a description of its structure and instructions to use the code to train LSTM networks and/or generate music using our trained networks.
+This repo consists on the final proyect by [PedroUria](https://github.com/PedroUria), [QuirkyDataScientist1978](https://github.com/QuirkyDataScientist1978) and [thekartikay](https://github.com/thekartikay) for our Neural Network class. Below is a description of its structure and instructions to use the code to train LSTM networks and/or generate music using our trained networks.
 
 ## Structure
 
