@@ -2,21 +2,25 @@
 \BOOKMARK [2][]{Outline1.1}{Introduction}{Outline1}% 2
 \BOOKMARK [3][]{Outline1.1.1.4}{Objective}{Outline1.1}% 3
 \BOOKMARK [2][]{Outline1.2}{Data}{Outline1}% 4
-\BOOKMARK [3][]{Outline1.2.1.10}{Data Format}{Outline1.2}% 5
+\BOOKMARK [3][]{Outline1.2.1.8}{Data Format}{Outline1.2}% 5
 \BOOKMARK [3][]{Outline1.2.2.13}{Dataset/s}{Outline1.2}% 6
 \BOOKMARK [2][]{Outline1.3}{Encoding}{Outline1}% 7
 \BOOKMARK [3][]{Outline1.3.1.15}{General Thoughts}{Outline1.3}% 8
-\BOOKMARK [3][]{Outline1.3.2.21}{Notes}{Outline1.3}% 9
-\BOOKMARK [3][]{Outline1.3.3.25}{Rests and Holds}{Outline1.3}% 10
-\BOOKMARK [3][]{Outline1.3.4.33}{Multivoice polyphony}{Outline1.3}% 11
+\BOOKMARK [3][]{Outline1.3.2.18}{Notes}{Outline1.3}% 9
+\BOOKMARK [3][]{Outline1.3.3.23}{Rests and Holds}{Outline1.3}% 10
+\BOOKMARK [3][]{Outline1.3.4.30}{Multivoice polyphony}{Outline1.3}% 11
 \BOOKMARK [1][]{Outline2}{2}{}% 12
-\BOOKMARK [2][]{Outline2.4}{Neural Network stuff}{Outline2}% 13
-\BOOKMARK [2][]{Outline2.5}{Experimental Results}{Outline2}% 14
-\BOOKMARK [3][]{Outline2.5.1.40}{Different training approaches}{Outline2.5}% 15
-\BOOKMARK [3][]{Outline2.5.2.41}{Hyperparameters}{Outline2.5}% 16
-\BOOKMARK [3][]{Outline2.5.3.42}{Hyperparameters Adjusted}{Outline2.5}% 17
-\BOOKMARK [3][]{Outline2.5.4.43}{Trained on various authors, individually}{Outline2.5}% 18
-\BOOKMARK [3][]{Outline2.5.5.44}{Future Work}{Outline2.5}% 19
-\BOOKMARK [2][]{Outline2.6}{Conclusion}{Outline2}% 20
-\BOOKMARK [3][]{Outline2.6.1.45}{Some last words}{Outline2.6}% 21
-\BOOKMARK [3][]{Outline2.6.2.46}{The End}{Outline2.6}% 22
+\BOOKMARK [2][]{Outline2.4}{Network Model}{Outline2}% 13
+\BOOKMARK [3][]{Outline2.4.1.36}{Structure}{Outline2.4}% 14
+\BOOKMARK [3][]{Outline2.4.2.37}{Teaching}{Outline2.4}% 15
+\BOOKMARK [3][]{Outline2.4.3.38}{Making music}{Outline2.4}% 16
+\BOOKMARK [3][]{Outline2.4.4.39}{Issues with generation}{Outline2.4}% 17
+\BOOKMARK [2][]{Outline2.5}{Experimental Results}{Outline2}% 18
+\BOOKMARK [3][]{Outline2.5.1.40}{Different training approaches}{Outline2.5}% 19
+\BOOKMARK [3][]{Outline2.5.2.41}{Hyperparameters}{Outline2.5}% 20
+\BOOKMARK [3][]{Outline2.5.3.42}{Hyperparameters Adjusted}{Outline2.5}% 21
+\BOOKMARK [3][]{Outline2.5.4.43}{Trained on various authors, individually}{Outline2.5}% 22
+\BOOKMARK [3][]{Outline2.5.5.44}{Future Work}{Outline2.5}% 23
+\BOOKMARK [2][]{Outline2.6}{Conclusion}{Outline2}% 24
+\BOOKMARK [3][]{Outline2.6.1.45}{Some last words}{Outline2.6}% 25
+\BOOKMARK [3][]{Outline2.6.2.46}{The End}{Outline2.6}% 26

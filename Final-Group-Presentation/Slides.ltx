@@ -43,16 +43,14 @@ Machine Learning II \\ \vspace{2mm}
 
 \begin{itemize}
 \item Build a Neural Network that can generate new music  \\
-\pause
  \vspace{2mm}
 \hspace{-6mm} Because of the temporal nature of music...
- \pause
  \vspace{2mm}
  \item We will use LSTM
  \pause
  \item We will train on many songs from an author and/or genre
  \pause
- \item The ANN will learn the probability distribution of a sequence of notes, i.e, the music
+ \item The ANN will learn the probability distribution of a sequence of notes in time, i.e, the music
  \pause
  \item Using this distribution, we can predict the next note based on an arbitrary number of previous notes
  \end{itemize}
@@ -71,12 +69,14 @@ Machine Learning II \\ \vspace{2mm}
 \begin{itemize}
 \item Protocol that stores music data and metadata, and allows different instruments and software to communicate with each other. \\
 \vspace{5mm}
-\pause
 \hspace{-6mm} It is made up by a series of events, with info regarding:
 \pause
 \item Location in time
+\pause
 \item Duration in time
+\pause
 \item Pitch, intensity and tempo
+\pause
 \item Other metadata
 \end{itemize}
 
@@ -110,9 +110,7 @@ From the author of \url{http://piano-midi.de/}.
 
 \begin{itemize}
 \item MIDI files provide us with more info than we need
-\pause
 \item We are going to use a many-hot encoding approach \\
-\pause
 \vspace{2mm}
 Thus...
 \pause
@@ -120,18 +118,17 @@ Thus...
 \pause
 \item Intensity will not be encoded: Same reason \\
 \end{itemize}
-\pause
 We are essentially losing expressiveness info in order to reduce the complexity of the network.
 
 \end{frame}
 
 \subsection{Notes}
 
-\begin{frame}{Many-One-Hot Encoding}
+\begin{frame}{Many-Hot Encoding}
 \begin{itemize}
 \item Python's \texttt{music21} library to read \texttt{.mid} files.
 \pause
-\item Preprocess the \texttt{stream} objects to get the data for the time events.
+\item Use some \texttt{stream} objects attributes to get the data for each time event.
 \end{itemize}
 \pause
 \begin{figure}[ht]
@@ -145,8 +142,8 @@ We are essentially losing expressiveness info in order to reduce the complexity 
 \pause
 \begin{itemize}
 \item Create a sequence where each input vector $\bar{p}_t$ corresponds to the duration of the shortest note on the piece/s: \\
-
-\textit{time step} $ \equiv \Delta_t = t_1 - t_0 = t_2 - t_1 = ... = cte $
+\pause
+\hspace{10mm} \textit{time step} $ \equiv \Delta_t = t_1 - t_0 = t_2 - t_1 = ... = cte $
 \end{itemize}
 
 \end{frame}
@@ -160,7 +157,7 @@ We are essentially losing expressiveness info in order to reduce the complexity 
 \item If a note is longer than the \textit{time step}, it will be split into more than one vector. Suppose we have:
 \end{itemize}
 \pause
-\textit{time step}  $=$  \Vier, event at $t_i =$ \Halb \hspace{2mm} \pause $\Rightarrow \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ....]$ \pause and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ....] = \bar{p}_{t_i}$ \pause $\Rightarrow$  \Vier \hspace{0.5mm}  \Vier \hspace{1mm} $\neq$ \Halb \hspace{2mm} \\
+\textit{time step}  $=$  \Vier, event at $t_i =$ \Halb \hspace{2mm} \pause $\Rightarrow \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ....]$ and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ....] = \bar{p}_{t_i}$ \pause $\Rightarrow$  \Vier \hspace{0.5mm}  \Vier \hspace{1mm} $\neq$ \Halb \hspace{2mm} \\
 
 \pause
 \begin{itemize}
@@ -354,7 +351,9 @@ Other authors:
 \item   Quality / Complexity of Model: Different models will yield different results
 \item   Accuracy of Tools: PyTorch, Keras, etc.
 \item   Infinite number of possible variables to tweak
-\item Improvements for the Future:
+\end{itemize}
+Improvements for the Future:
+\begin{itemize}
 \item  Generate harmonies for LSTM-generated melodies using MLP/CNN
 \item  New models for other genres of music
 \item  Improving the quality of output of the model
@@ -365,10 +364,10 @@ Other authors:
 \subsection{The End}
 
 \begin{frame}{Happy Music Generation!}
-
+\vspace{-1mm}
 \begin{figure}[ht]
    \begin{center}
-       \includegraphics[width=0.7
+       \includegraphics[width=0.75
                \textwidth]{piano-art.jpg}
   \end{center}
   \end{figure}
