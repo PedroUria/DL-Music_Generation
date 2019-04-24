@@ -6,5 +6,3 @@ The quaility of the MIDI files found in the internet can be very bad, as there a
 
 > How do I go about finding a certain classical work in MIDI format in the Internet?
 Some MIDI archives in the Internet contain thousands of classical works. You can find the corresponding links to them on my [Linkpage](http://piano-midi.de/links.htm). **The quality of the pieces, however, may vary considerably**.
-
- TODO: Aaron, describe your data a bit. 
