@@ -106,18 +106,26 @@ The second approach only takes a single note $[1]$ as initial input. Then, we go
 \section{Experiments and Results}
 
 \paragraph{Hyperparameters}
-
-Uhuh
+\begin{itemize}
+	\item hidden_size: After experimenting with various values as 356, 712 and 178, the best music was produced with hidden_size of 178.
+	\item seq_len: A sequence size of 100 works best for songs of Tschaikovsky, Albeniz, while the network generates soothing music for Haydn and Mendelssohn songs with a sequence length of 50.
+	\item time_step: It is the minimum time interval between two incremental events. Initially 0.05 was chosen, but due to the huge computational size of the data, 0.25 was chosen. This reduces the dataset size drastically without loss of the musical quality.
+	\item lr: A learning rate of 0.01 is chosen and this value decays as and when the loss increases instead of decreasing.
+	\item n_epoch: Roughly 50 - 100 epochs work well the chosen decaying learning rate. Once satifactory loss values is reached, using a keyboad interrupt the training can be manually stopped and the the model can be saved.
 
 \paragraph{Best Results} 
 
-Blabla
+Considering the parameters, the best results were seen, or rather heard, with the following values of the hyperparameters:
+	\item hidden_size: 178
+	\item seq_len: 50
+	\item time_step: 0.25
+	\item lr: 0.01 
+	\item n_epoch: 50 - 100
+
 
 \section{Conclusions}
 
-Mmmm
-
-
+Having designed and trained a Recurring Neural Network model, with a fairly satisfacory results. We hope to find ways to capture and encode more musical feature available to us through the midi files, such as, tempo, intensity and etc. Though complex, we aim to extend this idea to genres beyong classical, such as Pop, Rock, Jazz and so on. Other ways to encode the musical events of the midi files will also be explored. It can be noted that the problem of encoding the data is analogus to the challenge of encoding mesasges while transferring messages over a conectionless or connection network, without any loss of information.
 
 
 
