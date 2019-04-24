@@ -1,0 +1,39 @@
+\documentclass{article}[12pt]
+
+\usepackage{hyperref}
+
+\title{Individual Project Report}
+\author{Pedro Uria Rodriguez}
+
+\begin{document}
+
+\maketitle
+
+\section*{Individual Work}
+
+\begin{itemize}
+\item Researched on the topic, mainly by reading \href{https://arxiv.org/abs/1709.01620}{this great source}.
+\item Came up with the network architecture, training and generator functions.
+\item Wrote all the code located in the main \texttt{code} file apart from \texttt{combine.py}. 
+\item Helped write and revise the project proposal.
+\item Wrote the \textit{Encoding}, \textit{Network Architecture}, \textit{Training}, \textit{Generator} sections on the project report. TODO
+\item Designed the slides in LaTeX and filled up the TODO sections ... 
+\item Experimented with the networks and generated some music, located in \texttt{results} as well as on the main \texttt{generated-music} folder.
+\item Organized the repo and documented most TODO of the \texttt{README.md} files.
+
+\end{itemize}
+
+\section*{Percentage of non-self written code}
+
+\begin{itemize}
+
+\item \texttt{Data\_Preprocessing.ipynb}: 0\%. I referred to the \texttt{music21} \href{https://web.mit.edu/music21/doc/}{documentation}, but I did not copy any code as it was in there, just played with my own cases and with what was relevant for the project.
+\item \texttt{encoder\_decoder.py}: 0\%.
+\item \texttt{eval\_processor.py}: 0\%
+\item \texttt{multi\_many\_hot\_encoder\_decoder.py}: 0\%
+\item \texttt{training\_many\_deff.py}: 2.4\%. I used  \href{https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory}{this} to walk the data/classical subdirectory, and followed \href{https://github.com/amir-jafari/Deep-Learning/blob/master/Pytorch_/7-RNN/1_RNN.py}{this} for the general structure of the architecture and training code, although heavily modified.
+\item The rest of the scripts would be the same as this last one, so about the same percentage. 
+
+\end{itemize}
+
+\end{document}
