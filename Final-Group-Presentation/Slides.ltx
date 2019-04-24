@@ -194,12 +194,77 @@ $ \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ...., 1],  \bar{p}_{t_{i+1}} = [0, 0, ..
 
 \part{2}
 
-\section{Neural Network stuff}
+\section{Network Model}
 
-\begin{frame}{hhh}
+\subsection{Structure}
+\begin{frame}{Architecture}
+\begin{itemize}
+\item Model:
+\begin{itemize}
+\item LSTM
+\item Sigmoid
+\item Fully connected output layer
+\end{itemize}
+\item Transfer Function: Sigmoid assumes there is no influence of one class on the other. Therefore preventing the emergence of one single dominant probability.
+\item Performance Index: Binary Cross Entropy is picked over categorical cross entropy as we wish to treat each dimension of the output to be seperate. 
+\item Optimizer: Adam Optimizer
+\end{itemize}
+\end{frame}
 
-TODO
+\subsection{Teaching}
+\begin{frame}{Training}
+\begin{itemize}
+\item Single Song:
+\begin{itemize}
+\item Loss of the entire sequence: The loss of each item of the sequence is determined
+\item Loss of the last sequence member: The loss of only the last element of the sequence is calculated. Once losses are computed, using BPTT algorithm the weights and biases are updated.
+\end{itemize}
+\item Multiple Songs: 
+\begin{itemize}
+\item Sequence index (Approaches 1 $\&$ 2): Given a sequence index, all the losses across sequences are calculated and only then we go backwards to calculated to updates weights.
+\item Stacking all songs into a matrix (Approach 3): Irrespective of the songs, the encoded events are stacked one over another to form on large matrix and used to train. 
+\end{itemize}
+\end{itemize}
+\end{frame}
 
+\subsection{Making music}
+\begin{frame}{Generating}
+\begin{itemize}
+	\item Sequence Input: {\small [1, 2, 3] $\rightarrow$ [2', 3', 4], [2, 3, 4]  $\rightarrow$ [3', 4', 5], ...}
+	\begin{itemize}
+		\item A sequence of inputs is sampled from the training data and the output sequence is predicted for the input sequence
+		\item The last note of the output sequence is added to the previous input sequence, while the first note of this sequence is removed, and then this new sequence is used as input to the model and the new outputs are generated
+		\item This is repeated until a satisfactory number of output notes is generated. 
+	\end{itemize}
+	\vspace{1mm}
+	\item Single Input: {\small [1] $\rightarrow$ [2], [1, 2]  $\rightarrow$ [2', 3], [1, 2, 3] $\rightarrow$ [2', 3', 4], ...}
+	\begin{itemize}	
+		\item In this approach, a single input note is supplied to the model.
+		\item The generated output, together with the previous input, is then used to predict the next input for the model
+		\item We do this again and again, until we reach a sequence length equal to the one our network had been trained with. Then, we start doing the sequence input approach.
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Issues with generation}
+\begin{frame}{Problems}
+\begin{itemize}
+\item Event Stuck: 
+\begin{itemize}
+\item Issue: Network sometimes got stuck repeating a particular note over and over again
+\item Solution: We added an option (default to False) to change remove the last note from the generated sequence when the exact same note was generated 6 times in a row, and add a new note randomly sampled from one of the songs of the training set
+\end{itemize}
+\item Sequence Stuck:
+\begin{itemize}
+\item Issue:  Network getting stuck repeating a particular sequence
+\item Solution: Change the note when the number of generated notes is a multiple of the sequence length
+\end{itemize}
+\item Rest Stuck:
+\begin{itemize}
+\item Issue:  Too many rests in between the notes
+\item Solution: Remove rests of duration 4 * time-step or if the rests have been repeated during 4 time step.
+\end{itemize}
+\end{itemize}
 \end{frame}
 
 
@@ -249,7 +314,7 @@ TODO
 \begin{frame}{Results}
 Albeniz:
 \begin{itemize}
-\item Model did not predict well with this music - seems rather unpredictable
+\item It was very hard for us to get a decent result with this music - seems rather unpredictable
 \item Tuned multiple hyperparameters such as \texttt{hidden\_size}, \texttt{time\_step}, \texttt{lr}, \texttt{n\_epochs}
 \end{itemize}
 Tschaikovsky:
