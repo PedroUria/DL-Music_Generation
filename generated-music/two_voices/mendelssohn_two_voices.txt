@@ -4,6 +4,6 @@ net, l, ll = train_lstm_loss_whole_seq(50, n_epochs=100, lr=0.01)
 # To save the model
 torch.save(net.state_dict(), 'mendelssohn_two_voices.pkl')
 net = LSTMMusic(178, 178).cuda()
-#net.load_state_dict(torch.load("lstm_whole_seq_mendelssohn_both_stacked.pkl"))
+#net.load_state_dict(torch.load("mendelssohn_two_voices.pkl"))
 net.eval()
 ltsm_gen_v2(net, 50, "mendelssohn_two_voices", time_step=0.25, n_steps=1000, note_stuck=True)
