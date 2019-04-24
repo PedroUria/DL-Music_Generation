@@ -8,7 +8,7 @@ This subdirectory contains all the code used in this project. There are three ma
 
 ### Both hands together
 
-Both of these work on only one hand/voice. In order to encode two hands together (stacking them horizontally and creating a sequence of vectors with 2x components), we use a function named `get_both_hands`, which is defined inside the scripts dedicated to generate music with both harmony and melody (the ones containing `two_voices` on their names. TODO: I think take this function out of these and put it in another `.py` file. To decode two hands stacked together, we use `decode()` on each hand separately and then use `combine()` located in [combine.py](combine.py) to get back the `music21.stream.Stream()` object.
+Both of these work on only one hand/voice. In order to encode two hands together (stacking them horizontally and creating a sequence of vectors with 2x components), we use a function named `get_both_hands`, which is defined inside the scripts dedicated to generate music with both harmony and melody (the ones containing `two_voices` on their names. To decode two hands stacked together, we use `decode()` on each hand separately and then use `combine()` located in [combine.py](combine.py) to get back the `music21.stream.Stream()` object.
 
 We also wrote another approach, [multi_many_hot_encoder_decoder.py](multi_many_hot_encoder_decoder.py), TODO.
 
