@@ -20,12 +20,12 @@ We also wrote another approach, [multi_many_hot_encoder_decoder.py](multi_many_h
 
 ### On melodies
 
-The code for building training the networks was written in phases. First, we developed the arquitecture and the training process to train on only the melody and only one song, i.e, the most simplest case. We wanted to see how well our network could learn a given song (even if this meant overfiting on it). The code for this is located on [training_many_deff.py](training_many_deff.py), which actually can also take more than one song as training data. We used this script to train a LSTM network on [bach_846.mid](data/classical/bach/unknown/bach_846.mid), and generate a very similar output ([bach_4.mid](bach_4.mid)) using the trained network and the first note of [bach_846.mid](data/classical/bach/unknown/bach_846.mid) as the only input. The generative functions are also located inside this script, but will be described later. Then, we also used this script to train on many different songs, TODO.
+The code for building training the networks was written in phases. First, we developed the arquitecture and the training process to train on only the melody and only one song, i.e, the most simplest case. We wanted to see how well our network could learn a given song (even if this meant overfiting on it). The code for this is located on [training\_many\_deff.py](training_many_deff.py), which actually can also take more than one song as training data. We used this script to train a LSTM network on [bach_846.mid](data/classical/bach/unknown/bach_846.mid), and generate a very similar output ([bach_4.mid](bach_4.mid)) using the trained network and the first note of [bach_846.mid](data/classical/bach/unknown/bach_846.mid) as the only input. The generative functions are also located inside this script, but will be described later. Then, we also used this script to train on many different songs, TODO.
 
 ### On melodies + harmonies
 
-After ..., we built our networks to be trained and generate both the melody and the harmony at the same time. We used three different approaches... TODO.
+After this, we built our networks to be trained and generate both the melody and the harmony at the same time. We used three different approaches, documented in the report and named like `training\_many\_something`.
 
 ## Generating Music
 
-TODO 
+To generate music, you can just run the example code on the training files. There are also instructions in the generated music folder.
