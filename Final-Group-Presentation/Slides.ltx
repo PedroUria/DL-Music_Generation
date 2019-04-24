@@ -203,15 +203,71 @@ TODO
 
 \section{Experimental Results}
 
-\begin{frame}{hhh}
-
-TODO
+\begin{frame}
+\subsection{Hyperparameters}
+\begin{itemize}
+\ time_step: duration of each vector
+\ seq_len: number of time steps to input as a sequence
+\ hidden_size: number of neurons in LSTM layer
+\ lr: learning rate
+\ n_epoch: number of training iterations
+\ use_all_seq: uses all sequences of the pieces
+\ use_n_seq: used when all sequence is false
+\end{itemize}
+\subsection{Primary Hyperparameters adjusted:
+\begin{itemize}
+\ hidden_size
+\ time_step
+\ lr
+\ n_epoch
+\end{itemize}
 
 \end{frame}
 
-\section{Conclusions}
+%----------------------------------------------------------%
 
-\subsection{Mmmm}
+\section{Classical Music Experimental Results}
+
+\begin{frame}
+\subsection{Albeniz}
+\begin{itemize}
+\ Model did not predict well with this music - seems rather “predictable”
+\ Tuned multiple hyperparameters such as hidden_size, time_step, lr, n_epochs
+\subsection{Tschaikovsky}
+\ Model predicted well with this music - higher quality result
+\ Tuned multiple hyperparameters such as hidden_size, time_step, lr, n_epochs
+\subsection{Classical Mix}
+\ Experimented with mixing Albeniz, Mendelsohn, Bach and Tschaivkovsky mix
+\ Tuned multiple hyperparameters such as hidden_size, time_step, lr, n_epochs
+\ Results were bad - possible “confusion” of the model 
+\subsection{Mendelssohn}
+\ Model predicted “decently” - higher quality result
+\ Tuned multiple hyperparameters such as hidden_size, time_step, lr, n_epochs
+\end{itemize}
+
+%-----------------------------------------------------------------------------%
+\section{Conclusion}
+
+\begin{frame}
+\
+\begin{itemize}
+\ Music generation is very complex!
+\ Mathematics and music are intricately intertwined.
+\ Multiple complexities and levels of difficulty associated with music:
+\   Music: Time, Duration, Tempo
+\   Music Files: Quality of music files, Encoding, etc.
+\   Quality / Complesity of Model: Different models will yield different results
+\   Accuracy of Tools: PyTorch, Keras, etc.
+\   Infinite number of possible variables to tweak: Starting on a different note, Step, etc.
+\ Improvements for the Future:
+\  Generate melodies using MLP/CNN
+\  New models for other genres of music
+\  Improving the quality of output of the model
+\end{itemize}
+
+\end{frame}
+
+%-----------------------------------------------------------------------------%
 
 \begin{frame}{Whatever}
 
