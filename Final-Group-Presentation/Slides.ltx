@@ -10,7 +10,7 @@
 \mode<presentation>{\usetheme{Warsaw}\usecolortheme{orchid}}
 \beamertemplatenavigationsymbolsempty
 
-\title[Same title or shortened]{Some cool title}
+\title[Classical 846 LSTM]{Classical 846 LSTM}
 
 \author[Aaron A. Gauthier, Avijeet Kartikay and Pedro Uria Rodriguez]{Aaron A. Gauthier,  Avijeet Kartikay and Pedro Uria Rodriguez \\ \vspace{2mm}
 Machine Learning II \\ \vspace{2mm}
@@ -92,6 +92,7 @@ Machine Learning II \\ \vspace{2mm}
 \item Folders Organized by Author and Genre
 \item We want the data to be well organized 
 \item We also have other sources but... \\
+\pause
 \end{itemize}
 
 \say{How do I go about finding a certain classical work in MIDI format in the Internet? Some MIDI archives in the Internet contain thousands of classical works. You can find the corresponding links to them on my Linkpage. \textbf{The quality of the pieces, however, may vary considerably}} \\
@@ -116,17 +117,20 @@ From the author of \url{http://piano-midi.de/}.
 Thus...
 \pause
 \item Tempo will not be encoded: Too many possible values
+\pause
 \item Intensity will not be encoded: Same reason \\
 \end{itemize}
+\pause
 We are essentially losing expressiveness info in order to reduce the complexity of the network.
 
 \end{frame}
 
 \subsection{Notes}
 
-\begin{frame}{Many-one-hot Encoding}
+\begin{frame}{Many-One-Hot Encoding}
 \begin{itemize}
 \item Python's \texttt{music21} library to read \texttt{.mid} files.
+\pause
 \item Preprocess the \texttt{stream} objects to get the data for the time events.
 \end{itemize}
 \pause
@@ -203,75 +207,93 @@ TODO
 
 \section{Experimental Results}
 
-\begin{frame}
-\subsection{Hyperparameters}
+\subsection{Different training approaches}
+\begin{frame}{}
 \begin{itemize}
-\ time_step: duration of each vector
-\ seq_len: number of time steps to input as a sequence
-\ hidden_size: number of neurons in LSTM layer
-\ lr: learning rate
-\ n_epoch: number of training iterations
-\ use_all_seq: uses all sequences of the pieces
-\ use_n_seq: used when all sequence is false
+\item Approach \#1 did not work. The network got confused and did not learn any patterns
+\vspace{3mm}
+\item Approach \#2 worked decently, but tweaks to the generator were needed.
+\vspace{3mm}
+\item  Approach \#3 worked well for some data, although it also has its flaws.
 \end{itemize}
-\subsection{Primary Hyperparameters adjusted:
-\begin{itemize}
-\ hidden_size
-\ time_step
-\ lr
-\ n_epoch
-\end{itemize}
-
 \end{frame}
 
-%----------------------------------------------------------%
 
-\section{Classical Music Experimental Results}
-
-\begin{frame}
-\subsection{Albeniz}
+\subsection{Hyperparameters}
+\begin{frame}{Training Hyperparameters}
 \begin{itemize}
-\ Model did not predict well with this music - seems rather “predictable”
-\ Tuned multiple hyperparameters such as hidden_size, time_step, lr, n_epochs
-\subsection{Tschaikovsky}
-\ Model predicted well with this music - higher quality result
-\ Tuned multiple hyperparameters such as hidden_size, time_step, lr, n_epochs
-\subsection{Classical Mix}
-\ Experimented with mixing Albeniz, Mendelsohn, Bach and Tschaivkovsky mix
-\ Tuned multiple hyperparameters such as hidden_size, time_step, lr, n_epochs
-\ Results were bad - possible “confusion” of the model 
-\subsection{Mendelssohn}
-\ Model predicted “decently” - higher quality result
-\ Tuned multiple hyperparameters such as hidden_size, time_step, lr, n_epochs
+\item \texttt{time\_step}: duration of each vector
+\item \texttt{seq\_len}: number of time steps to input as a sequence
+\item \texttt{hidden\_size}: number of neurons in LSTM layer/s
+\item \texttt{lr}: learning rate
+\item \texttt{n\_epoch}: number of training iterations
+\item \texttt{use\_all\_seq}: uses all sequences of the pieces
+\item \texttt{use\_n\_seq}: used when all sequence is false
 \end{itemize}
+\end{frame}
+
+\subsection{Hyperparameters Adjusted}
+\begin{frame}{Best Values in General}
+\begin{itemize}
+\item \texttt{time\_step}: 0.25
+\item \texttt{seq\_len}: 30-50
+\item\texttt{hidden\_size}: 178 for Melody $\&$ Harmony, 89 for Melody.
+\item \texttt{lr}: 0.01
+\item \texttt{n\_epoch}: 50 - 100
+\item \texttt{use\_all\_seq}: \texttt{False}
+\item \texttt{use\_n\_seq}: 100
+\end{itemize}
+\end{frame}
+
+\subsection{Trained on various authors, individually}
+\begin{frame}{Results}
+Albeniz:
+\begin{itemize}
+\item Model did not predict well with this music - seems rather unpredictable
+\item Tuned multiple hyperparameters such as \texttt{hidden\_size}, \texttt{time\_step}, \texttt{lr}, \texttt{n\_epochs}
+\end{itemize}
+Tschaikovsky:
+\begin{itemize}
+\item Model predicted well with this music - higher quality result
+\item Tuned multiple hyperparameters such as \texttt{hidden\_size}, \texttt{time\_step}, \texttt{lr}, \texttt{n\_epochs}
+\end{itemize}
+Other authors:
+\begin{itemize}
+\item We tried many other authors, with various degrees of success
+\item Also needed to tune hyperparameters for most of them 
+\end{itemize}
+\end{frame}
+
+\subsection{Future Work}
+\begin{frame}{So many things we could do}
+\begin{itemize}
+\item Use a mix of different authors.
+\item We actually tried this but with a inherently flawed approach due to a lack of time
+\item We could also work on different genres of music
+\item Also different instruments, and potentially add more than two voices
+\item We could even generate only melodies via LSTM and then map these melodies with harmonies training a MLP/CNN on real melodies as inputs and their harmonies as outputs.
+\item Expand the network architecture by combining with other types
+\end{itemize}
+\end{frame}
 
 %-----------------------------------------------------------------------------%
 \section{Conclusion}
 
-\begin{frame}
-\
+\subsection{Some last words}
+\begin{frame}{Final Thoughts}
 \begin{itemize}
-\ Music generation is very complex!
-\ Mathematics and music are intricately intertwined.
-\ Multiple complexities and levels of difficulty associated with music:
-\   Music: Time, Duration, Tempo
-\   Music Files: Quality of music files, Encoding, etc.
-\   Quality / Complesity of Model: Different models will yield different results
-\   Accuracy of Tools: PyTorch, Keras, etc.
-\   Infinite number of possible variables to tweak: Starting on a different note, Step, etc.
-\ Improvements for the Future:
-\  Generate melodies using MLP/CNN
-\  New models for other genres of music
-\  Improving the quality of output of the model
+\item Music generation is very complex!
+\item Mathematics and music are intricately intertwined.
+\item Multiple complexities and levels of difficulty associated with music: Time, Duration, Tempo
+\item  Music Files: Quality of music files, Encoding, etc.
+\item   Quality / Complexity of Model: Different models will yield different results
+\item   Accuracy of Tools: PyTorch, Keras, etc.
+\item   Infinite number of possible variables to tweak
+\item Improvements for the Future:
+\item  Generate harmonies for LSTM-generated melodies using MLP/CNN
+\item  New models for other genres of music
+\item  Improving the quality of output of the model
 \end{itemize}
-
-\end{frame}
-
-%-----------------------------------------------------------------------------%
-
-\begin{frame}{Whatever}
-
-Something 
 
 \end{frame}
 
@@ -279,53 +301,28 @@ Something
 
 \begin{frame}{Happy Music Generation!}
 
-Some cool pic!
+\begin{figure}[ht]
+   \begin{center}
+       \includegraphics[width=0.7
+               \textwidth]{piano-art.jpg}
+  \end{center}
+  \end{figure}
+  \end{frame}
+  
+\begin{frame}{Sources}
 
-\end{frame}
+\begin{itemize}
+\item \url{https://arxiv.org/abs/1709.01620}
+\item \url{http://hagan.okstate.edu/NNDesign.pdf}
+\item MLII GWU class slides $\&$ notes.
+\item \url{https://web.mit.edu/music21/doc/}
+\item \url{https://pytorch.org/docs/stable/index.html}
+\item \url{https://gombru.github.io/2018/05/23/cross_entropy_loss/}
+\item \url{https://www.depends-on-the-definition.com/guide-to-multi-label-classification-with-neural-networks/}
+\item \href{http://piano-midi.de/}{Classical Piano Midi Page}
+\end{itemize}
+
+You can play with our system at: \url{https://github.com/PedroUria/DL-Music_Generation}
+  \end{frame}
 
 \end{document}
-
-
-
-%\subsection{Domain Knowledge}
-
-%\begin{frame}{Mushroom Features}
-%\begin{columns}
-%\begin{column}{0.5\textwidth}
-%\begin{figure}[ht]
- %   \begin{center}
- %       \includegraphics[width=0.7\textwidth]{1797-09-03_Agaricus_campestris_Plate_by_James_Sowerby.jpg}
- %   \end{center}
-   % \end{figure}
-   % \end{column}
-%\begin{column}{0.5\textwidth}
-%\begin{figure}[ht]
-  %  \begin{center}
-    %    \includegraphics[width=1\textwidth]{k208z0y.png}
-  %  \end{center}
-   % \end{figure}
-%Go to the \href{https://github.com/QuirkyDataScientist1978/GWU-Machine-Learning-1-Fall-2018-Mushroom-Classification-Project/blob/master/mushrooms.ipynb}{jupyter notebook} for an explanation of each of them. 
-%\end{column}
-%\end{columns}
-%\end{frame}
-
-
-
-%-----------------------------------------------------------%
-
-
-
-
-
-
-%\begin{frame}{References}
-%\begin{thebibliography}{1}
-%\bibitem{latexcompanion} 
-%Sebastian Raschka and Vahid Mirjalili. 
-%\textit{Python Machine Learning}. 
-%Packt, Birmingham, 2017
-
- 
-%\vspace{5mm}
-%Github Repository: \footnotesize\url{https://github.com/PedroUria/DL-Music_Generation}
-%\end{frame}
