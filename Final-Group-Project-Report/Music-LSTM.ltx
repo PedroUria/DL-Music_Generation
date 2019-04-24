@@ -14,9 +14,9 @@
 \usepackage[style=apa,sortcites=true,sorting=nyt,backend=biber]{biblatex}
 \DeclareLanguageMapping{american}{american-apa}
 
-\title{Some cool title}
+\title{Classical 846 LSTM}
 
-\shorttitle{Some cool title}
+\shorttitle{Classical 846 LSTM}
 
 \author{Aaron A. Gauthier, Avijeet Kartikay and Pedro Uria Rodriguez \\ Machine Learning II}
 
@@ -27,11 +27,11 @@
 
 \section{Introduction}
 
-\paragraph{Background} In the 6th century AD, Pythagoras proposed a concept called The Music of the Spheres‚ to describe the proportional movements of the celestial bodies in the sky. However, this was not music as we think of it today, but rather a mathematical representation. Math and Music are intrinsically intertwined. The field of algorithmic composition dates back to the early days of Computer Science. Hiller and Isaacson at the University of Illinois Urbana-Champaign were the first to use computers to create music. They programmed the university's Illiac I computer system to generate music tones based on random numbers. They utilized a model based on Markov Chains to predict the future path (probabilities) of a music note. If the note was not a fit, a new note was generated. The score that was generated in 1957 was called the Iliac suite string quartet. However, the music community did not immediately accept this as a true form of music, even though the scientific journals accepted and published their work. It was not until after Hillers death that their work was accepted and published within the music community. \\
+\paragraph{Background} In the 6th century AD, Pythagoras proposed a concept called \textit{The Music of the Spheres} to describe the proportional movements of the celestial bodies in the sky. However, this was not music as we think of it today, but rather a mathematical representation. Math and Music are intrinsically intertwined. The field of algorithmic composition dates back to the early days of Computer Science. Hiller and Isaacson at the University of Illinois Urbana-Champaign were the first to use computers to create music. They programmed the university's Illiac I computer system to generate music tones based on random numbers. They utilized a model based on Markov Chains to predict the future path (probabilities) of a music note. If the note was not a fit, a new note was generated. The score that was generated in 1957 was called the Iliac suite string quartet. However, the music community did not immediately accept this as a true form of music, even though the scientific journals accepted and published their work. It was not until after Hillers death that their work was accepted and published within the music community. \\
 
 \vspace{2mm}
 
-\paragraph{Current Situation} Today, generative programs such as iTunes amongst others are commonplace to aid humans in composing music.  There are 3 different types of models used for the composition of music. The first is a translation model. Translation models are rule-based models that take a non-musical medium like a picture and translate it into a rule-based algorithm for music. An example would be if it sees a horizontal line in a picture the rule may translate it as a constant pitch, whereas if it sees a vertical line it may translate it as a moving pitch or extended scale. The second is based on genetic algorithms such as mutation and natural selection. Different compositions essentially evolve into a suitable composition. The third model is the learning model, which is what we will focus on. In particular, we plan to use a LSTM network to learn the underlying probability distribution of the music piece and generate new music based on it.
+\paragraph{Current Situation} Today, generative programs such as iTunes amongst others are commonplace to aid humans in composing music.  There are 3 different types of models used for the composition of music. The first is a translation model. Translation models are rule-based models that take a non-musical medium like a picture and translate it into a rule-based algorithm for music. An example would be if it sees a horizontal line in a picture the rule may translate it as a constant pitch, whereas if it sees a vertical line it may translate it as a moving pitch or extended scale. The second is based on genetic algorithms such as mutation and natural selection. Different compositions essentially evolve into a suitable composition. The third model is the learning model, which is what we will focus on. In particular, we plan to use a LSTM network to learn the underlying probability distribution of the musical pieces and generate new music based on it.
 
 \section{Data}
 
@@ -39,11 +39,11 @@ We will be using Musical Instrument Digital Interface (MIDI) files. MIDI is basi
 
 \say{... The quality of the pieces, however, may vary considerably}
 
-\noindent as stated by the owner of \href{http://piano-midi.de/}{Classical Piano Midi Page}. This is in a big part due to the existence of audio to MIDI converters, which do not produce good quality. This softwares are actually trying to solve a very hard problem called \textit{audio source separation}, but no one has completely succeed yet.
+\noindent as stated by the owner of \href{http://piano-midi.de/}{Classical Piano Midi Page}. This is in a big part due to the existence of audio to MIDI converters, which do not produce good quality files. These softwares are actually trying to solve a very hard problem called \textit{audio source separation}, and no one has completely yet succeed.
 
 \section{Encoding}
 
-\paragraph{Different components} In order for our neural network to process music, we need to encode this music into a sequence of vectors with numerical values and of the same temporal duration (\textit{time step}) . These values need to represent the musical info of each time event (each note being played at a certain time). Each time event contains an \texttt{offset}, which indicates its temporal location. This will correspond with the position of the vector on the sequence. There is also the pitch, i.e, the frequency of the note/s being played. As we will be focusing mostly on piano music, we are considering 88 different notes. Thus, we took a \textit{many-hot-encoding} approach, in which we create a 88 dimensional vector with 1s on the position of the notes being played, as shown below:
+\paragraph{Different components} In order for our neural network to process music, we need to encode this music into a sequence of vectors with numerical values and of the same constant temporal duration (\textit{time step}) . These values need to represent the musical info of each time event (each note being played at a certain time). Each time event contains an \texttt{offset}, which indicates its temporal location. This will correspond with the position of the vector on the sequence. There is also the pitch, i.e, the frequency of the note/s being played. As we will be focusing mostly on piano music, we are considering 88 different notes. Thus, we took a \textit{many-hot-encoding} approach, in which we create a 88 dimensional vector with 1s on the position of the notes being played, as shown below:
 
 \begin{figure}[H]
    \begin{center}
@@ -54,17 +54,17 @@ We will be using Musical Instrument Digital Interface (MIDI) files. MIDI is basi
 
 \vspace{2mm}
 
-We also need to account for rests, so we create an extra dimension to do so. Finally, there is also the duration of each time event. If a note is longer than the \textit{time step}, it will be split into more than one vector. Suppose we have \textit{time step}  $=$  \Vier \hspace{0.5mm} and event at $t_i =$ \Halb. Then we decode it as $\bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ....]$  and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ....] = \bar{p}_{t_i}$, so we actually have \Vier \hspace{0.5mm} \Vier \hspace{1mm}, instead of \Halb \hspace{2mm}, which is obviously not right. To avoid this, we add another extra dimension called \textit{hold}. Then, our encoded vectors will be $\bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ...., 1]$ and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ...., 0]$. The last $1$ on $\bar{p}{t_i}$ indicates that the notes being played at $t_i$ are being held. Thus, we can have successfully encoded the duration of  the original note $t_i =$ \Halb. Originally, we also encoded the tempo as one extra dimension with integer values ranging from... TODO, but we realized that there was no way for use to train the network without actually \textit{one-hot} encoding this dimension into many more dimensions, so we deemed it not worth it. The same applies to the volume of each note.
+We also need to account for rests, so we create an extra dimension to do so. Finally, there is also the duration of each time event. If a note is longer than the \textit{time step}, it will be split into more than one vector. Suppose we have \textit{time step}  $=$  \Vier \hspace{0.5mm} and event at $t_i =$ \Halb. Then we decode it as $\bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ....]$  and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ....] = \bar{p}_{t_i}$, so we actually have \Vier \hspace{0.5mm} \Vier \hspace{1mm}, instead of \Halb \hspace{2mm}, which is obviously not right. To avoid this, we add another extra dimension called \textit{hold}. Then, our encoded vectors will be $\bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ...., 1]$ and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ...., 0]$. The last $1$ on $\bar{p}_{t_i}$ indicates that the notes being played at $t_i$ are being held. Thus, we can have successfully encoded the duration of  the original note $t_i =$ \Halb. Originally, we also encoded the tempo as one extra dimension with integer values ranging from... TODO, but we realized that there was no way for use to train the network without actually \textit{one-hot encoding} this dimension into many more dimensions, so we deemed it not worth it. The same applies to the volume of each note.
 
 \vspace{2mm}
 
-\paragraph{Melody} To generate melodies we only take the right hand of each song as input. Thus, the approach described above completely covers this need. Note that there can be more than one note being played at the same time, that is why this approach is called \textit{many-hot-encoding}. It is also worth mentioning that we forgot to encode the note $B_0$ (the third note from the left). However, this does not affect our results because notes so close to the left edge are rarely played, and actually, we could have even encoded less notes and it should have been fine. This might had actually make it easier for our networks to learn. 
+\paragraph{Melody} To generate melodies we only take the right hand of each song as input. Thus, the approach described above completely covers this need. Note that there can be more than one note being played at the same time, that is why this approach is called \textit{many-hot encoding}. It is also worth mentioning that we forgot to encode the note $B_0$ (the third note from the left). However, this does not affect our results because notes so close to the left edge are rarely played, and actually, we could have even encoded less notes and it should have been fine. This might had actually make it easier for our networks to learn. 
 
 \vspace{2mm}
 
 \paragraph{Melody $\&$ Harmony} In this case things got a bit more complex. As we did not want to increase the number of dimensions, we first thought about combining them together just by adding up the vectors for the left and the right hands. However, with this approach we lose info: the hold dimension on the vectors for the right and left hands gets mixed up and as a result the offsets get mixed up too. We believe there is no way to fix this problem if we decide to encode this way. Finally, we decided to stack them up horizontally, effectively doubling the number of dimensions. So we end up with a vector like \[\bar{p}_{t_i} = \overbrace{[0, 0, ...., 1, 0, 0 |}^{\text{left hand}} \overbrace{0, ...., 0, 0, 1, 0, ....]}^{\text{right hand}} \] 
 
-This will certainly make it harder for the network to learn, but with enough neurons and layers it might still be possible to learn both hands together. 
+This encoding method, called \textit{multi-many-hot encoding}, will certainly make it harder for the network to learn, but with enough neurons and layers it might still be possible to learn both hands together. 
 
 
 \section{Network Architecture}
@@ -73,7 +73,7 @@ This will certainly make it harder for the network to learn, but with enough neu
 
 \vspace{2mm}
 
-\paragraph{Output Layer} Because we are using a multi-many-hot encoding approach, we actually have a \textit{multi-label} classification problem. That is, each output vector can belong to more than one class, as we have the hold dimension and also more than one note can be played at the same time. Then, we cannot use the regular \textit{softmax} transfer function on the Output Layer, because this would only classify the output as a single note, as it models the joint probability of each dimension of the output multi-many-hot encoded vector. Indeed, this would result in only one dimension having a probability close to 1, while the rest are close to 0. Instead, we use a sigmoid function, which will model the probability of each dimension of our output vector individually, thus allowing for multiple probabilities close to 1, indicating that multiple notes and/or notes of larger duration are being generated.
+\paragraph{Output Layer} Because we are using a \textit{multi-many-hot encoding} approach, we actually have a \textit{multi-label} classification problem. That is, each output vector can belong to more than one class, as we have the hold dimension and also more than one note can be played at the same time. Then, we cannot use the regular \textit{softmax} transfer function on the Output Layer, because this would only classify the output as a single note, as it models the joint probability of each dimension of the output \textit{multi-many-hot encoded} vector. Indeed, this would result in only one dimension having a probability close to 1, while the rest are close to 0. Instead, we use a sigmoid function, which will model the probability of each dimension of our output vector individually, thus allowing for multiple probabilities close to 1, indicating that multiple notes and/or notes of larger duration are being generated.
 
 \vspace{2mm}
 
@@ -105,44 +105,64 @@ The second approach only takes a single note $[1]$ as initial input. Then, we go
 
 \section{Experiments and Results}
 
-\paragraph{Hyperparameters}
-\begin{itemize}
-	\item hidden_size: After experimenting with various values as 356, 712 and 178, the best music was produced with hidden_size of 178.
-	\item seq_len: A sequence size of 100 works best for songs of Tschaikovsky, Albeniz, while the network generates soothing music for Haydn and Mendelssohn songs with a sequence length of 50.
-	\item time_step: It is the minimum time interval between two incremental events. Initially 0.05 was chosen, but due to the huge computational size of the data, 0.25 was chosen. This reduces the dataset size drastically without loss of the musical quality.
-	\item lr: A learning rate of 0.01 is chosen and this value decays as and when the loss increases instead of decreasing.
-	\item n_epoch: Roughly 50 - 100 epochs work well the chosen decaying learning rate. Once satifactory loss values is reached, using a keyboad interrupt the training can be manually stopped and the the model can be saved.
+\paragraph{Hyperparameters} Our code contains many parameters and options to play with. Below we provide a brief description and some results trying different values for some of them.
+\begin{enumerate}
+	\item \texttt{hidden\_size}: After experimenting with various values such as 356, 712 and 178, the best music was produced with hidden\_size of 178 for melody $\&$ harmony and 89 for only melody.
+	\item \texttt{seq\_len}: A sequence size of 100 works best for songs of Tschaikovsky, Albeniz, while the network generates soothing music for Haydn and Mendelssohn songs with a sequence length of 50.
+	\item \texttt{time\_step}: It is the minimum time interval between two incremental events. Initially 0.05 was chosen, but due to the huge computational size of the data, 0.25 was chosen. This reduces the dataset size drastically without loss of the musical quality. A \textit{time step} lower than 0.25 (a 16th note) is usually a very bad idea.
+	\item \texttt{lr}: A learning rate of 0.01 is chosen and this value decays when the loss stops  decreasing for the last 10 epochs. The default 0.01 was alright in most cases, mainly thanks to this feature. 
+	\item \texttt{n\_epoch}: Roughly 50 - 100 epochs work well with the chosen decaying learning rate. Once a satisfactory loss values is reached, using a keyboard interrupt the training can be manually stopped and then it can be run again with this many epochs, instead of having to wait the initial chosen number of epochs.
+\end{enumerate}
+
 
 \paragraph{Best Results} 
 
-Considering the parameters, the best results were seen, or rather heard, with the following values of the hyperparameters:
-	\item hidden_size: 178
-	\item seq_len: 50
-	\item time_step: 0.25
-	\item lr: 0.01 
-	\item n_epoch: 50 - 100
+Considering the parameters, the best results were seen, or rather heard, by using the second training approach and more heavenly the third training approach, with the following values of the hyperparameters:
+\begin{enumerate}
+	\item \texttt{hidden\_size}: 178
+	\item \texttt{seq\_len}: 50
+	\item \texttt{time\_step}: 0.25
+	\item \texttt{lr}: 0.01 
+	\item \texttt{n\_epoch}: 50 - 100
+\end{enumerate}
+
+\noindent This is an example of the loss obtained over each epoch when training on multiple songs from Haydn:
+
+\begin{figure}[H]
+   \begin{center}
+       \includegraphics[width=
+               0.6\textwidth]{result_haydn.png}
+  \end{center}
+  \end{figure}
 
 
 \section{Conclusions}
 
-Having designed and trained a Recurring Neural Network model, with a fairly satisfacory results. We hope to find ways to capture and encode more musical feature available to us through the midi files, such as, tempo, intensity and etc. Though complex, we aim to extend this idea to genres beyong classical, such as Pop, Rock, Jazz and so on. Other ways to encode the musical events of the midi files will also be explored. It can be noted that the problem of encoding the data is analogus to the challenge of encoding mesasges while transferring messages over a conectionless or connection network, without any loss of information.
+We have designed and trained a LSTM model, with fairly satisfactory results. We hope to find ways to capture and encode more musical features available to us through the MIDI files, such as, tempo, intensity, etc. Though complex, we aim to extend this idea to genres beyond classical, such as Pop, Rock, Jazz and so on. Other ways to encode the musical events of the MIDI files will also be explored. It can be noted that the problem of encoding the data is analogous to the challenge of encoding messages while transferring them over a connectionless or fully connected network, without any loss of information. \\
 
+\vspace{2mm}
 
+We have seen that the training and generation process for networks trained on different data can be quite different, so there is no real way of getting good results every time. We have had good success on generating melodies, but also on generating melodies $\&$ harmonies combined, although the latter were a bit more hectic (as it was initially expected). One approach we considered but did not take due to a lack of time was using our system to generate melodies and then using a MLP/CNN to map these melodies with their corresponding harmonies, using the music we used to train the LSTM as training data, with input being the melody and target being the harmonies. We will consider this in a future approach.
 
-
-
-
-
-\newpage
-
-%\begin{thebibliography}{9}
-%\bibitem{latexcompanion} 
-%Sebastian Raschka and Vahid Mirjalili. 
-%\textit{Python Machine Learning}. 
-%Packt, Birmingham, 2017.
-%\https://arxiv.org/pdf/1709.01620.pdf
-%\http://hagan.okstate.edu/NNDesign.pdf
- 
-%\end{thebibliography}
+\begin{thebibliography}{9}
+\bibitem{latexcompanion} 
+Jean-Pierre Briot, Ga{\"e}tan Hadjeres, François-David Pachet, 
+\textit{Deep Learning Techniques for Music Generation - A Survey}, 23 Mar 2019 .
+\url{https://arxiv.org/abs/1709.01620}
+\bibitem{latexcompanion}
+Martin T. Hagan, Howard B. Demuth, Mark Hudson Beale, Orlando De Jes\'us,
+\textit{Neural Network Design}
+\url{http://hagan.okstate.edu/NNDesign.pdf}
+\bibitem{latexcompanion}
+\url{https://web.mit.edu/music21/doc/}
+\bibitem{latexcompanion}
+\url{https://pytorch.org/docs/stable/index.html}
+\bibitem{latexcompanion}
+\url{https://gombru.github.io/2018/05/23/cross_entropy_loss/}
+\bibitem{latexcompanion}
+\url{https://www.depends-on-the-definition.com/guide-to-multi-label-classification-with-neural-networks/}
+\bibitem{latexcompanion}
+\href{http://piano-midi.de/}{Classical Piano Midi Page}
+\end{thebibliography}
 
 \end{document}
