@@ -3,12 +3,14 @@
 \usepackage{harmony}  % Music stuff % https://martin-thoma.com/how-to-write-music-with-latex/
 \usepackage{hyperref}  % For links stuff
 %\usepackage{listings}
+\usepackage{amsmath} % Some math stuff
+\usepackage{dirtytalk} % Quote
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 
 \mode<presentation>{\usetheme{Warsaw}\usecolortheme{orchid}}
 \beamertemplatenavigationsymbolsempty
 
-\title[Same title or shortened]{Some cool title}
+\title[Classical 846 LSTM]{Classical 846 LSTM}
 
 \author[Aaron A. Gauthier, Avijeet Kartikay and Pedro Uria Rodriguez]{Aaron A. Gauthier,  Avijeet Kartikay and Pedro Uria Rodriguez \\ \vspace{2mm}
 Machine Learning II \\ \vspace{2mm}
@@ -21,52 +23,39 @@ Machine Learning II \\ \vspace{2mm}
 \maketitle
 
 \begin{frame}{Table of Contents}
-\tableofcontents
+\tableofcontents[part=1]
 \end{frame}
 
-%\begin{frame}{Table of Contents}
-%\tableofcontents[part=2]
-%\end{frame}
+\begin{frame}{Table of Contents}
+\tableofcontents[part=2]
+\end{frame}
 
 
 % -------------------------------------------------------------------------------- %
 
-%\part{1}
+\part{1}
 
 \section{Introduction}
 
 \subsection{Objective}
 
-\begin{frame}{Automatic Music Generation}
-
-TODO
+\begin{frame}{Music Generation System}
 
 \begin{itemize}
-\item Mmmm
-\pause
-\item Woooo
+\item Build a Neural Network that can generate new music  \\
+ \vspace{2mm}
+\hspace{-6mm} Because of the temporal nature of music...
+ \vspace{2mm}
+ \item We will use LSTM
  \pause
- 
- \vspace{3mm}
-And sooo..
- \vspace{3mm}
+ \item We will train on many songs from an author and/or genre
+ \pause
+ \item The ANN will learn the probability distribution of a sequence of notes in time, i.e, the music
+ \pause
+ \item Using this distribution, we can predict the next note based on an arbitrary number of previous notes
+ \end{itemize}
 
-\pause
-\item Yeahhh
-\pause
-\item lolll
-\pause
-\item Heh
-\end{itemize}
   
-\end{frame}
-
-\subsection{Motivation}
-
-\begin{frame}{Motivation}
-
-TODO
-
 \end{frame}
 
 %-----------------------------------------------------------%
@@ -80,12 +69,14 @@ TODO
 \begin{itemize}
 \item Protocol that stores music data and metadata, and allows different instruments and software to communicate with each other. \\
 \vspace{5mm}
-\pause
-\noindent It is made up by a series of events, with info regarding:
+\hspace{-6mm} It is made up by a series of events, with info regarding:
 \pause
 \item Location in time
+\pause
 \item Duration in time
+\pause
 \item Pitch, intensity and tempo
+\pause
 \item Other metadata
 \end{itemize}
 
@@ -96,8 +87,17 @@ TODO
 
 \begin{frame}{Data Sources}
 
-TODO
+\begin{itemize}
+\item Classical Piano Midi Page: \url{http://piano-midi.de/}
+\item Folders Organized by Author and Genre
+\item We want the data to be well organized 
+\item We also have other sources but... \\
+\pause
+\end{itemize}
 
+\say{How do I go about finding a certain classical work in MIDI format in the Internet? Some MIDI archives in the Internet contain thousands of classical works. You can find the corresponding links to them on my Linkpage. \textbf{The quality of the pieces, however, may vary considerably}} \\
+\vspace{2mm}
+From the author of \url{http://piano-midi.de/}. 
 \end{frame}
 
 %-----------------------------------------------------------%
@@ -110,13 +110,12 @@ TODO
 
 \begin{itemize}
 \item MIDI files provide us with more info than we need
-\pause
 \item We are going to use a many-hot encoding approach \\
-\pause
 \vspace{2mm}
 Thus...
 \pause
 \item Tempo will not be encoded: Too many possible values
+\pause
 \item Intensity will not be encoded: Same reason \\
 \end{itemize}
 We are essentially losing expressiveness info in order to reduce the complexity of the network.
@@ -125,10 +124,11 @@ We are essentially losing expressiveness info in order to reduce the complexity 
 
 \subsection{Notes}
 
-\begin{frame}{Many-one-hot Encoding}
+\begin{frame}{Many-Hot Encoding}
 \begin{itemize}
 \item Python's \texttt{music21} library to read \texttt{.mid} files.
-\item Preprocess the \texttt{stream} objects to get the data for the time events.
+\pause
+\item Use some \texttt{stream} objects attributes to get the data for each time event.
 \end{itemize}
 \pause
 \begin{figure}[ht]
@@ -142,8 +142,8 @@ We are essentially losing expressiveness info in order to reduce the complexity 
 \pause
 \begin{itemize}
 \item Create a sequence where each input vector $\bar{p}_t$ corresponds to the duration of the shortest note on the piece/s: \\
-
-Time Step $ \equiv \Delta_t = t_1 - t_0 = t_2 - t_1 = ... $
+\pause
+\hspace{10mm} \textit{time step} $ \equiv \Delta_t = t_1 - t_0 = t_2 - t_1 = ... = cte $
 \end{itemize}
 
 \end{frame}
@@ -154,10 +154,10 @@ Time Step $ \equiv \Delta_t = t_1 - t_0 = t_2 - t_1 = ... $
 \begin{itemize}
 \item Rests are essential to music. Add component \#88 to encode rests.
 \pause
-\item If a note is longer than the time step, it will be split into more than one vector. Suppose we have:
+\item If a note is longer than the \textit{time step}, it will be split into more than one vector. Suppose we have:
 \end{itemize}
 \pause
-time step  $=$  \Vier, event at $t_i =$ \Halb \hspace{2mm} \pause $\Rightarrow \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ....]$ \pause and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ....] = \bar{p}_{t_i}$ \pause $\Rightarrow$  \Vier \hspace{0.5mm}  \Vier \hspace{1mm} $\neq$ \Halb \hspace{2mm} \\
+\textit{time step}  $=$  \Vier, event at $t_i =$ \Halb \hspace{2mm} \pause $\Rightarrow \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ....]$ and $\bar{p}_{t_{i+1}} = [0, 0, ...., 1, 0, 0, ....] = \bar{p}_{t_i}$ \pause $\Rightarrow$  \Vier \hspace{0.5mm}  \Vier \hspace{1mm} $\neq$ \Halb \hspace{2mm} \\
 
 \pause
 \begin{itemize}
@@ -172,91 +172,221 @@ $ \bar{p}_{t_i} = [0, 0, ...., 1, 0, 0, ...., 1],  \bar{p}_{t_{i+1}} = [0, 0, ..
 
 \begin{frame}{Combining Melody \& Harmony}
 
-TODO
+\begin{itemize}
+\item Approach 1: Keep the same number of dimensions by just adding up the vectors from the left and right hands. \pause
+\[\bar{p}_{t_i} = \overbrace{[0, 1, ...., 0, 0, 1]}^{\text{left hand}} + \overbrace{[0, ...., 0, 1, 0, 0]}^{\text{right hand}} = [0, 1, ....., 0, 1, 0, 1 ] \]
+\pause \vspace{-6mm}
+\item Problem: \textit{hold} $=1$ or \textit{hold} $=0$? \pause $\Rightarrow$ Duration of note for each hand is lost.
+\pause
+\item Approach 2: Stack the left and right vectors together horizontally, effectively doubling the number of dimensions.
+\pause
+ \[\bar{p}_{t_i} = \overbrace{[0, 1, ...., 0, 0, 1 |}^{\text{left hand}} \overbrace{0, ...., 0, 1, 0, 0,]}^{\text{right hand}} \] 
 
-\end{frame}
-
-\section{Neural Network stuff}
-
-\begin{frame}{hhh}
-
-TODO
+\end{itemize}
 
 \end{frame}
 
 %-----------------------------------------------------------%
 
-\section{Conclusions}
 
-\subsection{Mmmm}
+\part{2}
 
-\begin{frame}{Whatever}
+\section{Network Model}
 
-Something 
+\subsection{Structure}
+\begin{frame}{Architecture}
+\begin{itemize}
+\item Model:
+\begin{itemize}
+\item LSTM
+\item Sigmoid
+\item Fully connected output layer
+\end{itemize}
+\item Transfer Function: Sigmoid assumes there is no influence of one class on the other. Therefore preventing the emergence of one single dominant probability.
+\item Performance Index: Binary Cross Entropy is picked over categorical cross entropy as we wish to treat each dimension of the output to be seperate. 
+\item Optimizer: Adam Optimizer
+\end{itemize}
+\end{frame}
 
-%\subsection{Decision Tree}
-%\begin{frame}{Simplest Easiest Decision Tree}
-%\begin{figure}[ht]
- %   \begin{center}
- %       \includegraphics[width=0.55
-%        \textwidth]{finaltree}
- %   \end{center}
- %   \end{figure}
-%\end{frame}
+\subsection{Teaching}
+\begin{frame}{Training}
+\begin{itemize}
+\item Single Song:
+\begin{itemize}
+\item Loss of the entire sequence: The loss of each item of the sequence is determined
+\item Loss of the last sequence member: The loss of only the last element of the sequence is calculated. Once losses are computed, using BPTT algorithm the weights and biases are updated.
+\end{itemize}
+\item Multiple Songs: 
+\begin{itemize}
+\item Sequence index (Approaches 1 $\&$ 2): Given a sequence index, all the losses across sequences are calculated and only then we go backwards to calculated to updates weights.
+\item Stacking all songs into a matrix (Approach 3): Irrespective of the songs, the encoded events are stacked one over another to form on large matrix and used to train. 
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Making music}
+\begin{frame}{Generating}
+\begin{itemize}
+	\item Sequence Input: {\small [1, 2, 3] $\rightarrow$ [2', 3', 4], [2, 3, 4]  $\rightarrow$ [3', 4', 5], ...}
+	\begin{itemize}
+		\item A sequence of inputs is sampled from the training data and the output sequence is predicted for the input sequence
+		\item The last note of the output sequence is added to the previous input sequence, while the first note of this sequence is removed, and then this new sequence is used as input to the model and the new outputs are generated
+		\item This is repeated until a satisfactory number of output notes is generated. 
+	\end{itemize}
+	\vspace{1mm}
+	\item Single Input: {\small [1] $\rightarrow$ [2], [1, 2]  $\rightarrow$ [2', 3], [1, 2, 3] $\rightarrow$ [2', 3', 4], ...}
+	\begin{itemize}	
+		\item In this approach, a single input note is supplied to the model.
+		\item The generated output, together with the previous input, is then used to predict the next input for the model
+		\item We do this again and again, until we reach a sequence length equal to the one our network had been trained with. Then, we start doing the sequence input approach.
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Issues with generation}
+\begin{frame}{Problems}
+\begin{itemize}
+\item Event Stuck: 
+\begin{itemize}
+\item Issue: Network sometimes got stuck repeating a particular note over and over again
+\item Solution: We added an option (default to False) to change remove the last note from the generated sequence when the exact same note was generated 6 times in a row, and add a new note randomly sampled from one of the songs of the training set
+\end{itemize}
+\item Sequence Stuck:
+\begin{itemize}
+\item Issue:  Network getting stuck repeating a particular sequence
+\item Solution: Change the note when the number of generated notes is a multiple of the sequence length
+\end{itemize}
+\item Rest Stuck:
+\begin{itemize}
+\item Issue:  Too many rests in between the notes
+\item Solution: Remove rests of duration 4 * time-step or if the rests have been repeated during 4 time step.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+%-----------------------------------------------------------%
+
+\section{Experimental Results}
+
+\subsection{Different training approaches}
+\begin{frame}{}
+\begin{itemize}
+\item Approach \#1 did not work. The network got confused and did not learn any patterns
+\vspace{3mm}
+\item Approach \#2 worked decently, but tweaks to the generator were needed.
+\vspace{3mm}
+\item  Approach \#3 worked well for some data, although it also has its flaws.
+\end{itemize}
+\end{frame}
+
+
+\subsection{Hyperparameters}
+\begin{frame}{Training Hyperparameters}
+\begin{itemize}
+\item \texttt{time\_step}: duration of each vector
+\item \texttt{seq\_len}: number of time steps to input as a sequence
+\item \texttt{hidden\_size}: number of neurons in LSTM layer/s
+\item \texttt{lr}: learning rate
+\item \texttt{n\_epoch}: number of training iterations
+\item \texttt{use\_all\_seq}: uses all sequences of the pieces
+\item \texttt{use\_n\_seq}: used when all sequence is false
+\end{itemize}
+\end{frame}
+
+\subsection{Hyperparameters Adjusted}
+\begin{frame}{Best Values in General}
+\begin{itemize}
+\item \texttt{time\_step}: 0.25
+\item \texttt{seq\_len}: 30-50
+\item\texttt{hidden\_size}: 178 for Melody $\&$ Harmony, 89 for Melody.
+\item \texttt{lr}: 0.01
+\item \texttt{n\_epoch}: 50 - 100
+\item \texttt{use\_all\_seq}: \texttt{False}
+\item \texttt{use\_n\_seq}: 100
+\end{itemize}
+\end{frame}
+
+\subsection{Trained on various authors, individually}
+\begin{frame}{Results}
+Albeniz:
+\begin{itemize}
+\item It was very hard for us to get a decent result with this music - seems rather unpredictable
+\item Tuned multiple hyperparameters such as \texttt{hidden\_size}, \texttt{time\_step}, \texttt{lr}, \texttt{n\_epochs}
+\end{itemize}
+Tschaikovsky:
+\begin{itemize}
+\item Model predicted well with this music - higher quality result
+\item Tuned multiple hyperparameters such as \texttt{hidden\_size}, \texttt{time\_step}, \texttt{lr}, \texttt{n\_epochs}
+\end{itemize}
+Other authors:
+\begin{itemize}
+\item We tried many other authors, with various degrees of success
+\item Also needed to tune hyperparameters for most of them 
+\end{itemize}
+\end{frame}
+
+\subsection{Future Work}
+\begin{frame}{So many things we could do}
+\begin{itemize}
+\item Use a mix of different authors.
+\item We actually tried this but with a inherently flawed approach due to a lack of time
+\item We could also work on different genres of music
+\item Also different instruments, and potentially add more than two voices
+\item We could even generate only melodies via LSTM and then map these melodies with harmonies training a MLP/CNN on real melodies as inputs and their harmonies as outputs.
+\item Expand the network architecture by combining with other types
+\end{itemize}
+\end{frame}
+
+%-----------------------------------------------------------------------------%
+\section{Conclusion}
+
+\subsection{Some last words}
+\begin{frame}{Final Thoughts}
+\begin{itemize}
+\item Music generation is very complex!
+\item Mathematics and music are intricately intertwined.
+\item Multiple complexities and levels of difficulty associated with music: Time, Duration, Tempo
+\item  Music Files: Quality of music files, Encoding, etc.
+\item   Quality / Complexity of Model: Different models will yield different results
+\item   Accuracy of Tools: PyTorch, Keras, etc.
+\item   Infinite number of possible variables to tweak
+\end{itemize}
+Improvements for the Future:
+\begin{itemize}
+\item  Generate harmonies for LSTM-generated melodies using MLP/CNN
+\item  New models for other genres of music
+\item  Improving the quality of output of the model
+\end{itemize}
 
 \end{frame}
 
 \subsection{The End}
 
 \begin{frame}{Happy Music Generation!}
+\vspace{-1mm}
+\begin{figure}[ht]
+   \begin{center}
+       \includegraphics[width=0.75
+               \textwidth]{piano-art.jpg}
+  \end{center}
+  \end{figure}
+  \end{frame}
+  
+\begin{frame}{Sources}
 
-Some cool pic!
+\begin{itemize}
+\item \url{https://arxiv.org/abs/1709.01620}
+\item \url{http://hagan.okstate.edu/NNDesign.pdf}
+\item MLII GWU class slides $\&$ notes.
+\item \url{https://web.mit.edu/music21/doc/}
+\item \url{https://pytorch.org/docs/stable/index.html}
+\item \url{https://gombru.github.io/2018/05/23/cross_entropy_loss/}
+\item \url{https://www.depends-on-the-definition.com/guide-to-multi-label-classification-with-neural-networks/}
+\item \href{http://piano-midi.de/}{Classical Piano Midi Page}
+\end{itemize}
 
-\end{frame}
+You can play with our system at: \url{https://github.com/PedroUria/DL-Music_Generation}
+  \end{frame}
 
 \end{document}
-
-
-
-%\subsection{Domain Knowledge}
-
-%\begin{frame}{Mushroom Features}
-%\begin{columns}
-%\begin{column}{0.5\textwidth}
-%\begin{figure}[ht]
- %   \begin{center}
- %       \includegraphics[width=0.7\textwidth]{1797-09-03_Agaricus_campestris_Plate_by_James_Sowerby.jpg}
- %   \end{center}
-   % \end{figure}
-   % \end{column}
-%\begin{column}{0.5\textwidth}
-%\begin{figure}[ht]
-  %  \begin{center}
-    %    \includegraphics[width=1\textwidth]{k208z0y.png}
-  %  \end{center}
-   % \end{figure}
-%Go to the \href{https://github.com/QuirkyDataScientist1978/GWU-Machine-Learning-1-Fall-2018-Mushroom-Classification-Project/blob/master/mushrooms.ipynb}{jupyter notebook} for an explanation of each of them. 
-%\end{column}
-%\end{columns}
-%\end{frame}
-
-
-
-%-----------------------------------------------------------%
-
-
-
-
-
-
-%\begin{frame}{References}
-%\begin{thebibliography}{1}
-%\bibitem{latexcompanion} 
-%Sebastian Raschka and Vahid Mirjalili. 
-%\textit{Python Machine Learning}. 
-%Packt, Birmingham, 2017
-
- 
-%\vspace{5mm}
-%Github Repository: \footnotesize\url{https://github.com/PedroUria/DL-Music_Generation}
-%\end{frame}

@@ -1,0 +1,488 @@
+File number 0 loaded
+File number 1 loaded
+File number 2 loaded
+There was an error encoding this file /home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op30_1.mid
+File number 4 loaded
+There was an error encoding this file /home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op19_6.mid
+File number 6 loaded
+File number 7 loaded
+File number 8 loaded
+File number 9 loaded
+The loading process took 31 seconds
+['/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op19_2.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op62_4.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op19_5.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op30_1.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op30_2.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op19_6.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op19_1.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op62_3.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op30_5.mid', '/home/ubuntu/DL-Music_Generation/data/classical/mendelssohn/romantic/mendel_op30_4.mid']
+---------- epoch number: 0 ----------
+           loss: 0.031030802
+---------- epoch number: 1 ----------
+           loss: 0.01371791
+---------- epoch number: 2 ----------
+           loss: 0.009210949
+---------- epoch number: 3 ----------
+           loss: 0.006758457
+---------- epoch number: 4 ----------
+           loss: 0.005401408
+---------- epoch number: 5 ----------
+           loss: 0.00441266
+---------- epoch number: 6 ----------
+           loss: 0.0036261615
+---------- epoch number: 7 ----------
+           loss: 0.0031888688
+---------- epoch number: 8 ----------
+           loss: 0.002695351
+---------- epoch number: 9 ----------
+           loss: 0.0024235107
+---------- epoch number: 10 ----------
+           loss: 0.0023102479
+---------- epoch number: 11 ----------
+           loss: 0.002076382
+---------- epoch number: 12 ----------
+           loss: 0.0020031303
+---------- epoch number: 13 ----------
+           loss: 0.001811167
+---------- epoch number: 14 ----------
+           loss: 0.0016763515
+---------- epoch number: 15 ----------
+           loss: 0.001676715
+---------- epoch number: 16 ----------
+           loss: 0.0015976173
+---------- epoch number: 17 ----------
+           loss: 0.0015792245
+---------- epoch number: 18 ----------
+           loss: 0.0015770579
+---------- epoch number: 19 ----------
+           loss: 0.0015493109
+---------- epoch number: 20 ----------
+           loss: 0.0014385816
+---------- epoch number: 21 ----------
+           loss: 0.0013961769
+---------- epoch number: 22 ----------
+           loss: 0.001252128
+---------- epoch number: 23 ----------
+           loss: 0.001365323
+---------- epoch number: 24 ----------
+           loss: 0.0013317137
+---------- epoch number: 25 ----------
+           loss: 0.0012691723
+---------- epoch number: 26 ----------
+           loss: 0.0011592703
+---------- epoch number: 27 ----------
+           loss: 0.001204658
+---------- epoch number: 28 ----------
+           loss: 0.0012224277
+---------- epoch number: 29 ----------
+           loss: 0.0012514777
+---------- epoch number: 30 ----------
+           loss: 0.0012596685
+---------- epoch number: 31 ----------
+           loss: 0.0012171477
+---------- epoch number: 32 ----------
+           loss: 0.0012457023
+---------- epoch number: 33 ----------
+           loss: 0.0011113414
+---------- epoch number: 34 ----------
+           loss: 0.0011262548
+---------- epoch number: 35 ----------
+           loss: 0.0012073707
+Halving learning rate from 0.01 to 0.005
+---------- epoch number: 36 ----------
+           loss: 0.0010872782
+---------- epoch number: 37 ----------
+           loss: 0.0007961056
+---------- epoch number: 38 ----------
+           loss: 0.0007242303
+---------- epoch number: 39 ----------
+           loss: 0.00066618656
+---------- epoch number: 40 ----------
+           loss: 0.00065409514
+---------- epoch number: 41 ----------
+           loss: 0.0005748595
+---------- epoch number: 42 ----------
+           loss: 0.00058775
+---------- epoch number: 43 ----------
+           loss: 0.0005901837
+---------- epoch number: 44 ----------
+           loss: 0.00060555857
+---------- epoch number: 45 ----------
+           loss: 0.0006333339
+---------- epoch number: 46 ----------
+           loss: 0.00058826024
+---------- epoch number: 47 ----------
+           loss: 0.00059653056
+---------- epoch number: 48 ----------
+           loss: 0.0005587504
+---------- epoch number: 49 ----------
+           loss: 0.0005283656
+---------- epoch number: 50 ----------
+           loss: 0.00054297165
+---------- epoch number: 51 ----------
+           loss: 0.00052475685
+---------- epoch number: 52 ----------
+           loss: 0.00060284685
+Halving learning rate from 0.005 to 0.0025
+---------- epoch number: 53 ----------
+           loss: 0.0006445837
+---------- epoch number: 54 ----------
+           loss: 0.0004507897
+---------- epoch number: 55 ----------
+           loss: 0.00041059434
+---------- epoch number: 56 ----------
+           loss: 0.00037069214
+---------- epoch number: 57 ----------
+           loss: 0.00034672717
+---------- epoch number: 58 ----------
+           loss: 0.0003588325
+---------- epoch number: 59 ----------
+           loss: 0.0003310174
+---------- epoch number: 60 ----------
+           loss: 0.00031826118
+---------- epoch number: 61 ----------
+           loss: 0.00030513422
+---------- epoch number: 62 ----------
+           loss: 0.00033926958
+---------- epoch number: 63 ----------
+           loss: 0.0003448823
+---------- epoch number: 64 ----------
+           loss: 0.00032789103
+---------- epoch number: 65 ----------
+           loss: 0.00031426107
+---------- epoch number: 66 ----------
+           loss: 0.00031356708
+---------- epoch number: 67 ----------
+           loss: 0.00028150153
+---------- epoch number: 68 ----------
+           loss: 0.00027416673
+---------- epoch number: 69 ----------
+           loss: 0.00027525466
+---------- epoch number: 70 ----------
+           loss: 0.00027368814
+---------- epoch number: 71 ----------
+           loss: 0.0002683445
+---------- epoch number: 72 ----------
+           loss: 0.00027015404
+---------- epoch number: 73 ----------
+           loss: 0.00024227277
+---------- epoch number: 74 ----------
+           loss: 0.0002445711
+---------- epoch number: 75 ----------
+           loss: 0.00027417732
+Halving learning rate from 0.0025 to 0.00125
+---------- epoch number: 76 ----------
+           loss: 0.00028760257
+---------- epoch number: 77 ----------
+           loss: 0.00023755518
+---------- epoch number: 78 ----------
+           loss: 0.000225829
+---------- epoch number: 79 ----------
+           loss: 0.00022450609
+---------- epoch number: 80 ----------
+           loss: 0.00020895881
+---------- epoch number: 81 ----------
+           loss: 0.00020362316
+---------- epoch number: 82 ----------
+           loss: 0.00019642992
+---------- epoch number: 83 ----------
+           loss: 0.00019388314
+---------- epoch number: 84 ----------
+           loss: 0.00019557119
+---------- epoch number: 85 ----------
+           loss: 0.00019418565
+---------- epoch number: 86 ----------
+           loss: 0.00019645518
+---------- epoch number: 87 ----------
+           loss: 0.00018397161
+---------- epoch number: 88 ----------
+           loss: 0.00018830734
+---------- epoch number: 89 ----------
+           loss: 0.00019162832
+---------- epoch number: 90 ----------
+           loss: 0.00017996917
+---------- epoch number: 91 ----------
+           loss: 0.00017491113
+---------- epoch number: 92 ----------
+           loss: 0.0001738681
+---------- epoch number: 93 ----------
+           loss: 0.00017352447
+---------- epoch number: 94 ----------
+           loss: 0.00016903214
+---------- epoch number: 95 ----------
+           loss: 0.00018101097
+---------- epoch number: 96 ----------
+           loss: 0.00018444985
+Halving learning rate from 0.00125 to 0.000625
+---------- epoch number: 97 ----------
+           loss: 0.00018091842
+---------- epoch number: 98 ----------
+           loss: 0.00018123975
+---------- epoch number: 99 ----------
+           loss: 0.00016213443
+
+The training process took 888.42 seconds
+
+Printing out the maximum prob of all notes for a time step when this maximum prob is less than 0.9
+5 left tensor([0.0346], device='cuda:0')
+6 left tensor([5.0249e-09], device='cuda:0')
+6 right tensor([0.0007], device='cuda:0')
+7 left tensor([0.0402], device='cuda:0')
+8 left tensor([6.5975e-06], device='cuda:0')
+8 right tensor([8.8362e-07], device='cuda:0')
+9 left tensor([0.0479], device='cuda:0')
+9 right tensor([0.8447], device='cuda:0')
+10 left tensor([0.0001], device='cuda:0')
+10 right tensor([1.1552e-06], device='cuda:0')
+12 left tensor([0.7101], device='cuda:0')
+12 right tensor([0.0358], device='cuda:0')
+13 left tensor([0.3428], device='cuda:0')
+50 left tensor([0.0000], device='cuda:0')
+53 left tensor([0.0152], device='cuda:0')
+55 left tensor([0.4047], device='cuda:0')
+56 left tensor([0.0003], device='cuda:0')
+56 right tensor([0.3489], device='cuda:0')
+58 left tensor([0.0005], device='cuda:0')
+58 right tensor([0.0027], device='cuda:0')
+59 left tensor([0.2732], device='cuda:0')
+62 left tensor([0.0176], device='cuda:0')
+66 left tensor([0.0414], device='cuda:0')
+68 left tensor([0.0740], device='cuda:0')
+70 left tensor([0.0157], device='cuda:0')
+70 right tensor([0.0260], device='cuda:0')
+71 left tensor([0.0420], device='cuda:0')
+72 left tensor([0.8332], device='cuda:0')
+74 left tensor([0.6338], device='cuda:0')
+74 right tensor([0.2201], device='cuda:0')
+75 left tensor([0.4482], device='cuda:0')
+75 right tensor([9.3795e-06], device='cuda:0')
+76 left tensor([0.7990], device='cuda:0')
+95 left tensor([0.8243], device='cuda:0')
+259 left tensor([2.1076e-07], device='cuda:0')
+260 left tensor([0.1745], device='cuda:0')
+260 right tensor([0.0005], device='cuda:0')
+262 left tensor([0.3585], device='cuda:0')
+262 right tensor([0.0003], device='cuda:0')
+265 left tensor([0.0012], device='cuda:0')
+265 right tensor([0.0091], device='cuda:0')
+269 left tensor([0.5504], device='cuda:0')
+273 left tensor([0.8221], device='cuda:0')
+273 right tensor([4.6285e-07], device='cuda:0')
+275 left tensor([0.8566], device='cuda:0')
+276 left tensor([0.0654], device='cuda:0')
+276 right tensor([0.0067], device='cuda:0')
+277 left tensor([0.0713], device='cuda:0')
+277 right tensor([0.8906], device='cuda:0')
+279 left tensor([0.0085], device='cuda:0')
+279 right tensor([0.0061], device='cuda:0')
+282 left tensor([0.7754], device='cuda:0')
+282 right tensor([0.0027], device='cuda:0')
+283 left tensor([0.0001], device='cuda:0')
+283 right tensor([0.1238], device='cuda:0')
+284 left tensor([0.0010], device='cuda:0')
+288 left tensor([0.0003], device='cuda:0')
+288 right tensor([0.0002], device='cuda:0')
+289 left tensor([0.0055], device='cuda:0')
+291 left tensor([0.8918], device='cuda:0')
+343 left tensor([2.1076e-07], device='cuda:0')
+344 left tensor([0.1745], device='cuda:0')
+344 right tensor([0.0005], device='cuda:0')
+346 left tensor([0.3585], device='cuda:0')
+346 right tensor([0.0003], device='cuda:0')
+349 left tensor([0.0012], device='cuda:0')
+349 right tensor([0.0091], device='cuda:0')
+353 left tensor([0.5504], device='cuda:0')
+357 left tensor([0.8221], device='cuda:0')
+357 right tensor([4.6284e-07], device='cuda:0')
+359 left tensor([0.8566], device='cuda:0')
+360 left tensor([0.0654], device='cuda:0')
+360 right tensor([0.0067], device='cuda:0')
+361 left tensor([0.0713], device='cuda:0')
+361 right tensor([0.8906], device='cuda:0')
+363 left tensor([0.0085], device='cuda:0')
+363 right tensor([0.0061], device='cuda:0')
+366 left tensor([0.7754], device='cuda:0')
+366 right tensor([0.0027], device='cuda:0')
+367 left tensor([0.0001], device='cuda:0')
+367 right tensor([0.1238], device='cuda:0')
+368 left tensor([0.0010], device='cuda:0')
+372 left tensor([0.0003], device='cuda:0')
+372 right tensor([0.0002], device='cuda:0')
+373 left tensor([0.0055], device='cuda:0')
+375 left tensor([0.8918], device='cuda:0')
+427 left tensor([2.1076e-07], device='cuda:0')
+428 left tensor([0.1745], device='cuda:0')
+428 right tensor([0.0005], device='cuda:0')
+430 left tensor([0.3585], device='cuda:0')
+430 right tensor([0.0003], device='cuda:0')
+433 left tensor([0.0012], device='cuda:0')
+433 right tensor([0.0091], device='cuda:0')
+437 left tensor([0.5504], device='cuda:0')
+441 left tensor([0.8221], device='cuda:0')
+441 right tensor([4.6285e-07], device='cuda:0')
+443 left tensor([0.8566], device='cuda:0')
+444 left tensor([0.0654], device='cuda:0')
+444 right tensor([0.0067], device='cuda:0')
+445 left tensor([0.0713], device='cuda:0')
+445 right tensor([0.8906], device='cuda:0')
+447 left tensor([0.0085], device='cuda:0')
+447 right tensor([0.0061], device='cuda:0')
+450 left tensor([0.7754], device='cuda:0')
+450 right tensor([0.0027], device='cuda:0')
+451 left tensor([0.0001], device='cuda:0')
+451 right tensor([0.1238], device='cuda:0')
+452 left tensor([0.0010], device='cuda:0')
+456 left tensor([0.0003], device='cuda:0')
+456 right tensor([0.0002], device='cuda:0')
+457 left tensor([0.0055], device='cuda:0')
+459 left tensor([0.8918], device='cuda:0')
+511 left tensor([2.1076e-07], device='cuda:0')
+512 left tensor([0.1745], device='cuda:0')
+512 right tensor([0.0005], device='cuda:0')
+514 left tensor([0.3585], device='cuda:0')
+514 right tensor([0.0003], device='cuda:0')
+517 left tensor([0.0012], device='cuda:0')
+517 right tensor([0.0091], device='cuda:0')
+521 left tensor([0.5504], device='cuda:0')
+525 left tensor([0.8221], device='cuda:0')
+525 right tensor([4.6284e-07], device='cuda:0')
+527 left tensor([0.8566], device='cuda:0')
+528 left tensor([0.0654], device='cuda:0')
+528 right tensor([0.0067], device='cuda:0')
+529 left tensor([0.0713], device='cuda:0')
+529 right tensor([0.8906], device='cuda:0')
+531 left tensor([0.0085], device='cuda:0')
+531 right tensor([0.0061], device='cuda:0')
+534 left tensor([0.7754], device='cuda:0')
+534 right tensor([0.0027], device='cuda:0')
+535 left tensor([0.0001], device='cuda:0')
+535 right tensor([0.1238], device='cuda:0')
+536 left tensor([0.0010], device='cuda:0')
+540 left tensor([0.0003], device='cuda:0')
+540 right tensor([0.0002], device='cuda:0')
+541 left tensor([0.0055], device='cuda:0')
+543 left tensor([0.8918], device='cuda:0')
+595 left tensor([2.1076e-07], device='cuda:0')
+596 left tensor([0.1745], device='cuda:0')
+596 right tensor([0.0005], device='cuda:0')
+598 left tensor([0.3585], device='cuda:0')
+598 right tensor([0.0003], device='cuda:0')
+601 left tensor([0.0012], device='cuda:0')
+601 right tensor([0.0091], device='cuda:0')
+605 left tensor([0.5504], device='cuda:0')
+609 left tensor([0.8221], device='cuda:0')
+609 right tensor([4.6285e-07], device='cuda:0')
+611 left tensor([0.8566], device='cuda:0')
+612 left tensor([0.0654], device='cuda:0')
+612 right tensor([0.0067], device='cuda:0')
+613 left tensor([0.0713], device='cuda:0')
+613 right tensor([0.8906], device='cuda:0')
+615 left tensor([0.0085], device='cuda:0')
+615 right tensor([0.0061], device='cuda:0')
+618 left tensor([0.7754], device='cuda:0')
+618 right tensor([0.0027], device='cuda:0')
+619 left tensor([0.0001], device='cuda:0')
+619 right tensor([0.1238], device='cuda:0')
+620 left tensor([0.0010], device='cuda:0')
+624 left tensor([0.0003], device='cuda:0')
+624 right tensor([0.0002], device='cuda:0')
+625 left tensor([0.0055], device='cuda:0')
+627 left tensor([0.8918], device='cuda:0')
+679 left tensor([2.1076e-07], device='cuda:0')
+680 left tensor([0.1745], device='cuda:0')
+680 right tensor([0.0005], device='cuda:0')
+682 left tensor([0.3585], device='cuda:0')
+682 right tensor([0.0003], device='cuda:0')
+685 left tensor([0.0012], device='cuda:0')
+685 right tensor([0.0091], device='cuda:0')
+689 left tensor([0.5504], device='cuda:0')
+693 left tensor([0.8221], device='cuda:0')
+693 right tensor([4.6284e-07], device='cuda:0')
+695 left tensor([0.8566], device='cuda:0')
+696 left tensor([0.0654], device='cuda:0')
+696 right tensor([0.0067], device='cuda:0')
+697 left tensor([0.0713], device='cuda:0')
+697 right tensor([0.8906], device='cuda:0')
+699 left tensor([0.0085], device='cuda:0')
+699 right tensor([0.0061], device='cuda:0')
+702 left tensor([0.7754], device='cuda:0')
+702 right tensor([0.0027], device='cuda:0')
+703 left tensor([0.0001], device='cuda:0')
+703 right tensor([0.1238], device='cuda:0')
+704 left tensor([0.0010], device='cuda:0')
+708 left tensor([0.0003], device='cuda:0')
+708 right tensor([0.0002], device='cuda:0')
+709 left tensor([0.0055], device='cuda:0')
+711 left tensor([0.8918], device='cuda:0')
+763 left tensor([2.1076e-07], device='cuda:0')
+764 left tensor([0.1745], device='cuda:0')
+764 right tensor([0.0005], device='cuda:0')
+766 left tensor([0.3585], device='cuda:0')
+766 right tensor([0.0003], device='cuda:0')
+769 left tensor([0.0012], device='cuda:0')
+769 right tensor([0.0091], device='cuda:0')
+773 left tensor([0.5504], device='cuda:0')
+777 left tensor([0.8221], device='cuda:0')
+777 right tensor([4.6285e-07], device='cuda:0')
+779 left tensor([0.8566], device='cuda:0')
+780 left tensor([0.0654], device='cuda:0')
+780 right tensor([0.0067], device='cuda:0')
+781 left tensor([0.0713], device='cuda:0')
+781 right tensor([0.8906], device='cuda:0')
+783 left tensor([0.0085], device='cuda:0')
+783 right tensor([0.0061], device='cuda:0')
+786 left tensor([0.7754], device='cuda:0')
+786 right tensor([0.0027], device='cuda:0')
+787 left tensor([0.0001], device='cuda:0')
+787 right tensor([0.1238], device='cuda:0')
+788 left tensor([0.0010], device='cuda:0')
+792 left tensor([0.0003], device='cuda:0')
+792 right tensor([0.0002], device='cuda:0')
+793 left tensor([0.0055], device='cuda:0')
+795 left tensor([0.8918], device='cuda:0')
+847 left tensor([2.1076e-07], device='cuda:0')
+848 left tensor([0.1745], device='cuda:0')
+848 right tensor([0.0005], device='cuda:0')
+850 left tensor([0.3585], device='cuda:0')
+850 right tensor([0.0003], device='cuda:0')
+853 left tensor([0.0012], device='cuda:0')
+853 right tensor([0.0091], device='cuda:0')
+857 left tensor([0.5504], device='cuda:0')
+861 left tensor([0.8221], device='cuda:0')
+861 right tensor([4.6284e-07], device='cuda:0')
+863 left tensor([0.8566], device='cuda:0')
+864 left tensor([0.0654], device='cuda:0')
+864 right tensor([0.0067], device='cuda:0')
+865 left tensor([0.0713], device='cuda:0')
+865 right tensor([0.8906], device='cuda:0')
+867 left tensor([0.0085], device='cuda:0')
+867 right tensor([0.0061], device='cuda:0')
+870 left tensor([0.7754], device='cuda:0')
+870 right tensor([0.0027], device='cuda:0')
+871 left tensor([0.0001], device='cuda:0')
+871 right tensor([0.1238], device='cuda:0')
+872 left tensor([0.0010], device='cuda:0')
+876 left tensor([0.0003], device='cuda:0')
+876 right tensor([0.0002], device='cuda:0')
+877 left tensor([0.0055], device='cuda:0')
+879 left tensor([0.8918], device='cuda:0')
+931 left tensor([2.1076e-07], device='cuda:0')
+932 left tensor([0.1745], device='cuda:0')
+932 right tensor([0.0005], device='cuda:0')
+934 left tensor([0.3585], device='cuda:0')
+934 right tensor([0.0003], device='cuda:0')
+937 left tensor([0.0012], device='cuda:0')
+937 right tensor([0.0091], device='cuda:0')
+941 left tensor([0.5504], device='cuda:0')
+945 left tensor([0.8221], device='cuda:0')
+945 right tensor([4.6285e-07], device='cuda:0')
+947 left tensor([0.8566], device='cuda:0')
+948 left tensor([0.0654], device='cuda:0')
+948 right tensor([0.0067], device='cuda:0')
+949 left tensor([0.0713], device='cuda:0')
+949 right tensor([0.8906], device='cuda:0')
+951 left tensor([0.0085], device='cuda:0')
+951 right tensor([0.0061], device='cuda:0')
+954 left tensor([0.7754], device='cuda:0')
+954 right tensor([0.0027], device='cuda:0')
+955 left tensor([0.0001], device='cuda:0')
+955 right tensor([0.1238], device='cuda:0')
+956 left tensor([0.0010], device='cuda:0')
+960 left tensor([0.0003], device='cuda:0')
+960 right tensor([0.0002], device='cuda:0')
+961 left tensor([0.0055], device='cuda:0')
+963 left tensor([0.8918], device='cuda:0')

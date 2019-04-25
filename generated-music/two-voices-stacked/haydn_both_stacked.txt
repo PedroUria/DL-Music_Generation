@@ -1,0 +1,9 @@
+notes_encoded = load("haydn", "sonata", 10)
+# Code used to train the network. Note that even if you run this you will not get the same network
+# net, l, ll = train_lstm_loss_whole_seq(50, n_epochs=100, lr=0.01)
+# To save the model
+# torch.save(net.state_dict(), 'beethoven_both_stacked.pkl')
+net = LSTMMusic(178, 178).cuda()
+net.load_state_dict(torch.load("beethoven_both_stacked.pkl"))
+net.eval()
+ltsm_gen_v2(net, 50, "beethoven_both_stacked", sampling_idx=2, time_step=0.25, n_steps=300)

@@ -1,0 +1,9 @@
+notes_encoded = load("grieg", "unknown", 20, time_step=0.25)
+# Code used to train the network. Note that even if you run this you will not get the same network
+# net, l, ll = train_lstm_loss_whole_seq(30, n_epochs=50, lr=0.01)
+# To save the model
+# torch.save(net.state_dict(), 'grieg_both_stacked.pkl')
+net = LSTMMusic(178, 178).cuda()
+net.load_state_dict(torch.load("grieg_both_stacked.pkl"))
+net.eval()
+ltsm_gen_v2(net, 30, "grieg_both_stacked", sampling_idx=0, time_step=0.25, n_steps=300, note_stuck=True)

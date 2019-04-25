@@ -1,0 +1,7 @@
+notes_encoded = load("tschai", "unknown", 4, time_step=0.125)
+net, l, ll = train_lstm_loss_whole_seq(100, n_epochs=100, lr=0.01)
+torch.save(net.state_dict(), 'tschai_faststep_it10_both_stacked_1.pkl')
+# net = LSTMMusic(178, 178).cuda()
+# net.load_state_dict(torch.load("beethoven_both_stacked_1.pkl"))
+# net.eval()
+ltsm_gen_v2(net, 100, "tschai_faststep_it10_both_stacked_1", sampling_idx=0, time_step=0.2, n_steps=1000)

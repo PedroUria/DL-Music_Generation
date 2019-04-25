@@ -1,3 +1,12 @@
+# ------------------------------------------------------------
+# This script consists on our approach to training the network
+# on many songs by computing the aggregated loss of each sequence
+# of each song, and updating for each sequences (better explained
+# on the final report). Also, the hidden and cell states get
+# mixed up.
+# ------------------------------------------------------------
+
+
 import os
 import music21 as ms  # python3 -m pip install --user music21 for installing on ubuntu instance
 import numpy as np
@@ -8,13 +17,12 @@ from combine import combine
 import matplotlib.pyplot as plt
 from time import time
 from random import randint
-# NOTE: If you run this on the cloud (you should), you will need to download the files this code
-# generates to evaluate them and compare with the original file/s.
-# Use: scp -i ~/.ssh/my-ssh-key [USERNAME]@[IP_ADDRESS]:[REMOTE_FILE_PATH] [LOCAL_FILE_PATH] to do so
+
 
 # ----------------------------------------------------
 # Getting all the paths for the files under classical
 # ----------------------------------------------------
+
 
 path = os.getcwd()[:-4] + "data/classical"
 
@@ -40,6 +48,7 @@ for files in files_by_author_and_subgenre.values():
             files_by_subgenre[key] += filess
         else:
             files_by_subgenre[key] = filess
+
 
 # ------------------------------
 # Defining our Loading Functions
@@ -133,6 +142,7 @@ def load(author, subgenre, number, time_step=0.25):
 
     return encoded_notes
 
+
 # -----------------------------------------
 # Building our Neural Network Architecture
 # -----------------------------------------
@@ -169,19 +179,26 @@ class LSTMMusic(nn.Module):
 # --------------------------------
 
 
-def train_lstm_loss_only_last(seq_len, hidden_size=178, lr=0.01, n_epochs=100):
+def train_lstm_loss_only_last(seq_len, hidden_size=178, lr=0.01,
+                              n_epochs=100, use_all_seq=False, use_n_seq=100):
 
     """
     Training function where we compare only the last predicted note to get the loss,
     meaning that we want to focus on predicting the next note even if we input
     a sequence of many notes. If input_seq = [1, 2, 3], we get [2, 3, 4] as predicted
     but only use [4] and its real value to get the loss
+    In this approach, we go compute for a particular sequence, for all songs, by adding the losses
+    on that particular sequence (number) together and then only going backwards and updating the network
+    once we have gone through all the songs, for that sequence number. We repeat this for each sequence number,
+    and of course, for each epoch too. The difference between here and training_many_deff_two_voices_dict.py is
+    that the hidden and cell states are not kept for each song (in a dictionary)
     :param seq_len: Number of time steps to input as a sequence
-    :param hidden_size: Number of neurons on the LSTM Layer. Default is number of input dims
+    :param hidden_size: Number of neurons on the LSTM hidden layer
     :param lr: Learning rate
     :param n_epochs: Number of training iterations
-    :return: class instance with learned parameters, loss per sample
-    and loss per epoch
+    :param use_all_seq: If True, uses all the sequences of the pieces. Default: False
+    :param use_n_seq: Used when use_all_seq=False, we will only use these number of sequences (the first ones)
+    :return: class instance with learned parameters, loss per sample and loss per epoch
     """
 
     start = time()
@@ -197,7 +214,10 @@ def train_lstm_loss_only_last(seq_len, hidden_size=178, lr=0.01, n_epochs=100):
     len_piece = []
     for nts in notes_encoded.values():
         len_piece.append(nts.shape[0])
-    n_seq = min(len_piece) - seq_len - 1
+    if use_all_seq:
+        n_seq = min(len_piece) - seq_len - 1
+    else:
+        n_seq = use_n_seq  # Uses only the first use_n_seq sequences of each piece
     for epoch in range(n_epochs):
         print("---------- epoch number:", epoch, "----------")
         for step in range(n_seq):
@@ -231,20 +251,25 @@ def train_lstm_loss_only_last(seq_len, hidden_size=178, lr=0.01, n_epochs=100):
     return net, l, ll
 
 
-def train_lstm_loss_whole_seq(seq_len, hidden_size=178, lr=0.01, n_epochs=100, use_all_seq=False, use_n_seq=100):
+def train_lstm_loss_whole_seq(seq_len, hidden_size=178, lr=0.01,
+                              n_epochs=100, use_all_seq=False, use_n_seq=100):
 
     """
     Training function where we compare all the notes predicted by the network for a given
     input sequence to get the loss. If input_seq = [1, 2, 3], we get [2, 3, 4] as predicted
     outputs and use all of them together with their true values to compute the loss.
+    In this approach, we go compute for a particular sequence, for all songs, by adding the losses
+    on that particular sequence (number) together and then only going backwards and updating the network
+    once we have gone through all the songs, for that sequence number. We repeat this for each sequence number,
+    and of course, for each epoch too. The difference between here and training_many_deff_two_voices_dict.py is
+    that the hidden and cell states are not kept for each song (in a dictionary)
     :param seq_len: Number of time steps to input as a sequence
     :param hidden_size: Number of neurons on the LSTM hidden layer
     :param lr: Learning rate
     :param n_epochs: Number of training iterations
     :param use_all_seq: If True, uses all the sequences of the pieces. Default: False
     :param use_n_seq: Used when use_all_seq=False, we will only use these number of sequences (the first ones)
-    :return: class instance with learned parameters, loss per sample
-    and loss per epoch
+    :return: class instance with learned parameters, loss per sample and loss per epoch
     """
 
     start = time()
@@ -271,7 +296,7 @@ def train_lstm_loss_whole_seq(seq_len, hidden_size=178, lr=0.01, n_epochs=100, u
             for i in range(len(notes_encoded)):
                 x = notes_encoded[i][step:seq_len+step, :, :]
                 x.requires_grad = True
-                # Uses only the next note after input sequence to get the loss
+                # Uses all the notes after input each note in input sequence to get the loss
                 y = notes_encoded[i][step+1:seq_len+step+1, :, :]
                 y_pred, h_c_state = net(x, (h_state, c_state))
                 # Repacks the hidden state, break the connection from last iteration
@@ -317,6 +342,7 @@ def plot_loss(l, ll):
 # Defining our Generative Functions
 # ---------------------------------
 
+
 def get_tempo_dim_back(notes, tempo=74):
     """
     Adds an extra dimension for the tempo
@@ -331,29 +357,39 @@ def get_tempo_dim_back(notes, tempo=74):
     return c
 
 
-def ltsm_gen(net, seq_len, file_name, sampling_index=0, n_steps=100, hidden_size=178, time_step=0.05):
+def ltsm_gen(net, seq_len, file_name, sampling_idx=0, sequence_start=0, n_steps=100, hidden_size=178,
+             time_step=0.05, changing_note=False, note_stuck=False, remove_extra_rests=True):
 
     """
     Uses the trained LSTM to generate new notes and saves the output to a MIDI file
+    This approach uses a whole sequence of notes of one of the pieces we used to train
+    the network, with length seq_len, which should be the same as the one used when training
     :param net: Trained LSTM
     :param seq_len: Length of input sequence
     :param file_name: Name to be given to the generated MIDI file
-    :param sampling_index: File to get the input sequence from, out of the pieces used to train the LSTM
+    :param sampling_idx: File to get the input sequence from, out of the pieces used to train the LSTM
+    :param sequence_start: Index of the starting sequence, default to 0
     :param n_steps: Number of vectors to generate
     :param hidden_size: Hidden size of the trained LSTM
     :param time_step: Vector duration. Should be the same as the one on get_right_hand()
+    :param changing_note: To sample from different sources at some point of the generation
+    and add this new note to the sequence. This is done in case the generation gets stuck
+    repeating a particular sequence over and over.
+    :param note_stuck: To change the note if the generation gets stuck playing the same
+    note over and over.
+    :param remove_extra_rests: If the generation outputs a lot of rests in between, use this
     :return: None. Just saves the generated music as a .mid file
     """
 
     notes = []  # Will contain a sequence of the predicted notes
-    x = notes_encoded[sampling_index][:seq_len]  # Uses the input sequence
+    x = notes_encoded[sampling_idx][sequence_start:sequence_start+seq_len]  # Uses the input sequence
     for nt in x:  # To start predicting. This will be later removed from
         notes.append(nt.cpu().numpy())  # the final output
     h_state = torch.zeros(1, 1, hidden_size).float().cuda()
     c_state = torch.zeros(1, 1, hidden_size).float().cuda()
     print_first = True  # To print out a message if every component of a
     # predicted vector is less than 0.9
-    # change_note = False  # TODO: Use this to break the stucking loop
+    change_note = False
 
     for _ in range(n_steps):
         chosen = False  # To account for when no dimension's probability is bigger than 0.9
@@ -362,97 +398,154 @@ def ltsm_gen(net, seq_len, file_name, sampling_index=0, n_steps=100, hidden_size
         y_pred = y_pred.data  # We only care about the last predicted note
         y_pred = y_pred[-1]  # (next note after last note of input sequence)
         choose = torch.zeros((1, 1, 178))  # Coverts the probabilities to the actual note vector
-        for idx in range(178):
-            if y_pred[:, idx] > 0.9:
+        y_pred_left = y_pred[:, :89]
+        for idx in range(89):
+            if y_pred_left[:, idx] > 0.9:
                 choose[:, :, idx] = 1
                 chosen = True
-                if y_pred[:, -1] >= 0.7:  # We add a hold condition, in case the probability
-                    choose[:, :, -1] = 1  # of having a hold is close to the one of having the pitch
-        if not chosen:  # If no dimension is greater than 0.9
+        if y_pred_left[:, -1] >= 0.7:  # We add a hold condition, in case the probability
+            choose[:, :, 88] = 1  # of having a hold is close to the one of having the pitch
+        if not chosen:
             if print_first:
                 print("\nPrinting out the maximum prob of all notes for a time step",
                       "when this maximum prob is less than 0.9")
                 print_first = False
-            # Predicts the note as the one with the highest probability
-            pred_note_idx = np.argmax(y_pred.cpu())
+            pred_note_idx = np.argmax(y_pred_left.cpu())
             choose[:, :, pred_note_idx] = 1
-            if pred_note_idx != 88:  # We do not want to add holds for rests in this case
-                if y_pred[:, pred_note_idx] - y_pred[:, -1] <= 0.2:  # Hold condition
+            if pred_note_idx != 87:  # No holds for rests
+                if y_pred_left[:, pred_note_idx] - y_pred_left[:, -1] <= 0.2:  # Hold condition
+                    choose[:, :, 88] = 1
+            print(_, "left", y_pred_left[:, np.argmax(y_pred_left.cpu())])  # Maximum probability out of all components
+        y_pred_right = y_pred[:, 89:]
+        for idx in range(89):
+            if y_pred_right[:, idx] > 0.9:
+                choose[:, :, idx + 89] = 1
+                chosen = True
+        if y_pred_right[:, -1] >= 0.7:
+            choose[:, :, -1] = 1
+        if not chosen:
+            if print_first:
+                print("\nPrinting out the maximum prob of all notes for a time step",
+                      "when this maximum prob is less than 0.9")
+                print_first = False
+            pred_note_idx = np.argmax(y_pred_right.cpu())
+            choose[:, :, pred_note_idx + 89] = 1
+            if pred_note_idx != 87:  # No holds for rests
+                if y_pred_right[:, pred_note_idx] - y_pred_right[:, -1] <= 0.2:  # Hold condition
                     choose[:, :, -1] = 1
-            print(_, y_pred[:, np.argmax(y_pred.cpu())])  # Maximum probability out of all components
+            print(_, "right",
+                  y_pred_right[:, np.argmax(y_pred_right.cpu())])  # Maximum probability out of all components
         x_new = torch.empty(x.shape)  # Uses the output of the last time_step
         for idx, nt in enumerate(x[1:]):  # As the input for the next time_step
             x_new[idx] = nt  # So the new sequence will be the same past sequence minus the first note
-
-        # To avoid repeating sequences
-        # repeat = False
-        #         if len(notes) > seq_len+2:
-        #             repeat = True
-        #             for idxx, nt in enumerate(notes[::-1][:10]):
-        #                 # print(type(nt), type(notes[::-1][10 + idxx]))
-        #                 #print(notes[::-1][10+idxx].shape)
-        #                 #print(10 + idxx, "---", len(notes), len(notes[::-1]))
-        #                 try:
-        #                     if (nt == notes[::-1][10 + idxx]).sum() != 89:
-        #                         repeat = False
-        #                 except:
-        #                     pass
-        #             for idxx, nt in enumerate(notes[::-1][:seq_len]):
-        #                 try:
-        #                     if (nt == notes[::-1][seq_len + idxx]).sum() != 89:
-        #                         repeat = False
-        #                 except:
-        #                     pass
-        #         if repeat:  # To avoid repeating sequences
-        #             if sampling_idx >= len(notes_encoded):
-        #                 sampling_idx = 0
-        #                 change_note = True
-        #             if change_note:
-        #                 x_new[-1] = notes_encoded[sampling_idx][np.random.randint(1, 100, size=1)[0], :, :]
-        #                 change_note = False
-        #             else:
-        #                 x_new[-1] = notes_encoded[sampling_idx][0, :, :]
-        #             sampling_idx += 1
-        #else:
-            # x_new[-1] = choose  # of such past sequence, and plus the predicted note from this iteration
-
         x_new[-1] = choose
         x = x_new.cuda()  # We will use this new sequence to predict in the next iteration the next note
         notes.append(choose.cpu().numpy())  # Saves the predicted note
+
+        # Condition so that the generation does not
+        # get stuck on a particular sequence
+        if changing_note:
+            if _ % seq_len == 0:
+                if sampling_idx >= len(notes_encoded):
+                    sampling_idx = 0
+                    change_note = True
+                st = randint(1, 100)
+                if change_note:
+                    x_new[-1] = notes_encoded[sampling_idx][st, :, :]
+                    change_note = False
+                else:
+                    x_new[-1] = notes_encoded[sampling_idx][0, :, :]
+                sampling_idx += 1
+                x = x_new.cuda()
+
+        # Condition so that the generation does not
+        # get stuck on a particular note
+        if _ > 6 and note_stuck:
+            if (notes[-1][:, :, 89:] == notes[-2][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                if (notes[-1][:, :, 89:] == notes[-3][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                    if (notes[-1][:, :, 89:] == notes[-4][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                        if (notes[-1][:, :, 89:] == notes[-5][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                            if (notes[-1][:, :, 89:] == notes[-6][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                                for m in range(5):
+                                    notes.pop(-1)
+                                if sampling_idx >= len(notes_encoded):
+                                    sampling_idx = 0
+                                x_new[-1] = notes_encoded[sampling_idx][randint(1, 100), :, :]
+                                x = x_new.cuda()
+                                sampling_idx += 1
 
     # Gets the notes into the correct NumPy array shape
     gen_notes = np.empty((len(notes) - seq_len + 1, 178))  # Doesn't use the first predicted notes
     for idx, nt in enumerate(notes[seq_len - 1:]):  # Because these were sampled from the training data
         gen_notes[idx] = nt[0]
 
-    # Decodes the generated music and saves it as a MIDI file
-    left = get_tempo_dim_back(gen_notes[:, :89], 74)
-    right = get_tempo_dim_back(gen_notes[:, 89:], 74)
-    gen_left = decode(left, time_step=time_step)
-    gen_right = decode(right, time_step=time_step)
-    combine(gen_left, gen_right, file_name + ".mid")
+    # Decodes the generated music
+    gen_midi_left = decode(get_tempo_dim_back(gen_notes[:, :89], 74), time_step=time_step)
+    # Gets rid of too many rests
+    if remove_extra_rests:
+        stream_left = ms.stream.Stream()
+        for idx, nt in enumerate(gen_midi_left):
+            if type(nt) == ms.note.Rest and idx < len(gen_midi_left) - 5:
+                if nt.duration.quarterLength > 4 * time_step:
+                    print("Removing rest")
+                    continue
+                if type(gen_midi_left[idx + 4]) == ms.note.Rest:
+                    print("Removing rest")
+                    continue
+                stream_left.append(nt)
+            else:
+                stream_left.append(nt)
+    else:
+        stream_left = gen_midi_left
+    # Same thing for right hand
+    gen_midi_right = decode(get_tempo_dim_back(gen_notes[:, 89:], 74), time_step=time_step)
+    if remove_extra_rests:
+        stream_right = ms.stream.Stream()
+        for idx, nt in enumerate(gen_midi_right):
+            if type(nt) == ms.note.Rest and idx < len(gen_midi_right) - 5:
+                if nt.duration.quarterLength > 4 * time_step:
+                    print("Removing rest")
+                    continue
+                if type(gen_midi_right[idx + 4]) == ms.note.Rest:
+                    print("Removing rest")
+                    continue
+                stream_right.append(nt)
+            else:
+                stream_right.append(nt)
+    else:
+        stream_right = gen_midi_right
+
+    # Saves both hands combined as a MIDI file
+    combine(stream_left, stream_right, file_name + ".mid")
 
 
-def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_size=178, time_step=0.05):
+def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, note_pos=0, n_steps=100, hidden_size=178,
+                time_step=0.05, changing_note=False, note_stuck=False, remove_extra_rests=True):
 
     """
     Uses the trained LSTM to generate new notes and saves the output to a MIDI file
-    The difference between this and the previos one is that we only use one note as input
+    The difference between this and the previous one is that we only use one note as input
     And then keep generating notes until we have a sequence of notes of length = seq_len
     Once we do, we start appending the generated notes to the final output
     :param net: Trained LSTM
     :param seq_len: Length of input sequence
     :param file_name: Name to be given to the generated MIDI file
-    :param sampling_idx: File to get the input sequence from, out of the pieces used to train
-    the LSTM. This parameter will change over time, to use notes from multiple pieces
+    :param sampling_idx: File to get the input note from, out of the pieces used to train the LSTM
+    :param note_pos: Position of the sampled input note in the source piece, default to the first note
     :param n_steps: Number of vectors to generate
     :param hidden_size: Hidden size of the trained LSTM
     :param time_step: Vector duration. Should be the same as the one on get_right_hand()
+    :param changing_note: To sample from different sources at some point of the generation
+    and add this new note to the sequence. This is done in case the generation gets stuck
+    repeating a particular sequence over and over.
+    :param note_stuck: To change the note if the generation gets stuck playing the same
+    note over and over.
+    :param remove_extra_rests: If the generation outputs a lot of rests in between, use this
     :return: None. Just saves the generated music as a .mid file
     """
 
     notes = []  # Will contain a sequence of the predicted notes
-    x = notes_encoded[sampling_idx][0:1, :, :]  # First note of the piece
+    x = notes_encoded[sampling_idx][note_pos:note_pos+1, :, :]  # First note of the piece
     notes.append(x.cpu().numpy())  # Saves the first note
     h_state = torch.zeros(1, 1, hidden_size).float().cuda()
     c_state = torch.zeros(1, 1, hidden_size).float().cuda()
@@ -479,7 +572,7 @@ def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_siz
                 print_first = False
             pred_note_idx = np.argmax(y_pred_left.cpu())
             choose[:, :, pred_note_idx] = 1
-            if pred_note_idx != 88:  # No holds for rests
+            if pred_note_idx != 87:  # No holds for rests
                 if y_pred_left[:, pred_note_idx] - y_pred_left[:, -1] <= 0.2:  # Hold condition
                     choose[:, :, 88] = 1
             print(_, "left", y_pred_left[:, np.argmax(y_pred_left.cpu())])  # Maximum probability out of all components
@@ -520,20 +613,35 @@ def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_siz
 
         # Condition so that the generation does not
         # get stuck on a particular sequence
+        if changing_note:
+            if _ % seq_len == 0:
+                if sampling_idx >= len(notes_encoded):
+                    sampling_idx = 0
+                    change_note = True
+                st = randint(1, 100)
+                if change_note:
+                    x_new[-1] = notes_encoded[sampling_idx][st, :, :]
+                    change_note = False
+                else:
+                    x_new[-1] = notes_encoded[sampling_idx][0, :, :]
+                sampling_idx += 1
+                x = x_new.cuda()
 
-        #def n():
-        if _ % seq_len == 0:
-            if sampling_idx >= len(notes_encoded):
-                sampling_idx = 0
-                change_note = True
-            st = randint(1, 100)
-            if change_note:
-                x_new[-1] = notes_encoded[sampling_idx][st, :, :]
-                change_note = False
-            else:
-                x_new[-1] = notes_encoded[sampling_idx][0, :, :]
-            sampling_idx += 1
-            x = x_new.cuda()
+        # Condition so that the generation does not
+        # get stuck on a particular note
+        if _ > 6 and note_stuck:
+            if (notes[-1][:, :, 89:] == notes[-2][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                if (notes[-1][:, :, 89:] == notes[-3][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                    if (notes[-1][:, :, 89:] == notes[-4][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                        if (notes[-1][:, :, 89:] == notes[-5][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                            if (notes[-1][:, :, 89:] == notes[-6][:, :, 89:]).sum(2)[0][0].numpy() in [88, 89]:
+                                for m in range(5):
+                                    notes.pop(-1)
+                                if sampling_idx >= len(notes_encoded):
+                                    sampling_idx = 0
+                                x_new[-1] = notes_encoded[sampling_idx][randint(1, 100), :, :]
+                                x = x_new.cuda()
+                                sampling_idx += 1
 
     # Gets the notes into the correct NumPy array shape
     gen_notes = np.empty((len(notes)-seq_len+1, 178))  # Doesn't use the first predicted notes
@@ -543,32 +651,38 @@ def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_siz
     # Decodes the generated music
     gen_midi_left = decode(get_tempo_dim_back(gen_notes[:, :89], 74), time_step=time_step)
     # Gets rid of too many rests
-    stream_left = ms.stream.Stream()
-    for idx, nt in enumerate(gen_midi_left):
-        if type(nt) == ms.note.Rest and idx < len(gen_midi_left) - 5:
-            if nt.duration.quarterLength > 4*time_step:
-                print("Removing rest")
-                continue
-            if type(gen_midi_left[idx + 4]) == ms.note.Rest:
-                print("Removing rest")
-                continue
-            stream_left.append(nt)
-        else:
-            stream_left.append(nt)
+    if remove_extra_rests:
+        stream_left = ms.stream.Stream()
+        for idx, nt in enumerate(gen_midi_left):
+            if type(nt) == ms.note.Rest and idx < len(gen_midi_left) - 5:
+                if nt.duration.quarterLength > 4*time_step:
+                    print("Removing rest")
+                    continue
+                if type(gen_midi_left[idx + 4]) == ms.note.Rest:
+                    print("Removing rest")
+                    continue
+                stream_left.append(nt)
+            else:
+                stream_left.append(nt)
+    else:
+        stream_left = gen_midi_left
     # Same thing for right hand
     gen_midi_right = decode(get_tempo_dim_back(gen_notes[:, 89:], 74), time_step=time_step)
-    stream_right = ms.stream.Stream()
-    for idx, nt in enumerate(gen_midi_right):
-        if type(nt) == ms.note.Rest and idx < len(gen_midi_right) - 5:
-            if nt.duration.quarterLength > 4 * time_step:
-                print("Removing rest")
-                continue
-            if type(gen_midi_right[idx + 4]) == ms.note.Rest:
-                print("Removing rest")
-                continue
-            stream_right.append(nt)
-        else:
-            stream_right.append(nt)
+    if remove_extra_rests:
+        stream_right = ms.stream.Stream()
+        for idx, nt in enumerate(gen_midi_right):
+            if type(nt) == ms.note.Rest and idx < len(gen_midi_right) - 5:
+                if nt.duration.quarterLength > 4 * time_step:
+                    print("Removing rest")
+                    continue
+                if type(gen_midi_right[idx + 4]) == ms.note.Rest:
+                    print("Removing rest")
+                    continue
+                stream_right.append(nt)
+            else:
+                stream_right.append(nt)
+    else:
+        stream_right = gen_midi_right
 
     # Saves both hands combined as a MIDI file
     combine(stream_left, stream_right, file_name + ".mid")
@@ -577,6 +691,7 @@ def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_siz
 # -------------
 # Some Attempts
 # -------------
+
 
 # notes_encoded = load("bach", "unknown", 1)
 # net, l, ll = train_lstm_loss_whole_seq(28, lr=0.01, n_epochs=100)
@@ -588,13 +703,30 @@ def ltsm_gen_v2(net, seq_len, file_name, sampling_idx=0, n_steps=100, hidden_siz
 # The left hand offset is a bit wrong, but other than that, pretty good
 
 
-# notes_encoded = load("mendelssohn", "romantic", 10)
+notes_encoded = load("mendelssohn", "romantic", 10)
 # net, l, ll = train_lstm_loss_whole_seq(50, n_epochs=100, lr=0.01)
 # torch.save(net.state_dict(), 'lstm_whole_seq_mendelssohn_both.pkl')
-# net = LSTMMusic(178, 178).cuda()
-# net.load_state_dict(torch.load("lstm_whole_seq_mendelssohn_both.pkl"))
-# net.eval()
-# ltsm_gen_v2(net, 50, "mendelssohn_both", time_step=0.25, n_steps=1000)
+net = LSTMMusic(178, 178).cuda()
+net.load_state_dict(torch.load("lstm_whole_seq_mendelssohn_both.pkl"))
+net.eval()
+ltsm_gen_v2(net, 50, "mendelssohn_both", time_step=0.25, n_steps=1000)
 # Decent!
 
+# notes_encoded = load("mozart", "sonata", 10)
+# net, l, ll = train_lstm_loss_whole_seq(50, lr=0.02, n_epochs=100)
+# torch.save(net.state_dict(), 'lstm_whole_seq_mozart_both.pkl')
+# net = LSTMMusic(178, 178).cuda()
+# net.load_state_dict(torch.load("lstm_whole_seq_mozart_both.pkl"))
+# net.eval()
+# ltsm_gen_v2(net, 50, "mozart_both", time_step=0.25, n_steps=400)
+# Meh...
+
+# notes_encoded = load("beethoven", "sonata", 100)
+# net, l, ll = train_lstm_loss_whole_seq(50, lr=0.01, n_epochs=100)
+# torch.save(net.state_dict(), 'lstm_whole_seq_beethoven_both.pkl')
+# net = LSTMMusic(178, 178).cuda()
+# net.load_state_dict(torch.load("lstm_whole_seq_mozart_both.pkl"))
+# net.eval()
+# ltsm_gen_v2(net, 50, "beethoven_both", time_step=0.25, n_steps=400)
+# Pretty bad for the most part xD
 

@@ -1,0 +1,7 @@
+notes_encoded = load("tschai", "unknown", 4)
+# Code used to train the network. Note that even if you run this you will not get the same network
+# net, l, ll = train_lstm_loss_whole_seq(50, n_epochs=100, lr=0.01)
+# torch.save(net.state_dict(), 'tschai_both_stacked.pkl')
+net = LSTMMusic(178, 178).cuda()
+net.load_state_dict(torch.load("tschai_both_stacked.pkl"))
+ltsm_gen_v2(net, 50, "tschai_both_stacked", time_step=0.25, n_steps=1000, note_stuck=True)
