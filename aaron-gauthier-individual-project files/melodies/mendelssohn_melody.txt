@@ -1,9 +1,0 @@
-# To check if we can get a very good result trying to learn only one song
-notes_encoded = load("mendelssohn", "romantic", 4)
-net, l, ll = train_lstm_loss_whole_seq(100, hidden_size=89, lr=0.01, n_epochs=100, use_all_seq=True)
-torch.save(net.state_dict(), 'lstm_mendelssohn__melody.pkl')
-# net = LSTMMusic(89, 89).cuda()
-# net.load_state_dict(torch.load("lstm_bach.pkl"))
-# net.eval()
-ltsm_gen_v2(net, 100, "mendelssohn__melody", hidden_size=89, time_step=0.25, n_steps=1000)
-# Yeap, almost the same!!
