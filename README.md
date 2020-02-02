@@ -1,10 +1,10 @@
 # Music-Generation
 
-This repo consists on the final proyect by [PedroUria](https://github.com/PedroUria), [QuirkyDataScientist1978](https://github.com/QuirkyDataScientist1978) and [thekartikay](https://github.com/thekartikay) for our Neural Network class. Below is a description of its structure and instructions to use the code to train LSTM networks and/or generate music using our trained networks.
+This repo consists on the final proyect by [PedroUria](https://github.com/PedroUria), [QuirkyDataScientist1978](https://github.com/QuirkyDataScientist1978) and [thekartikay](https://github.com/thekartikay) for our Neural Network class. Below is a description of its structure and instructions to use the code to train LSTM networks and/or generate music using our trained networks. You can also visit [www.lstmmusic.com](http://www.lstmmusic.com/) to listen to some samples and generate music by interacting with a simple UI. However, if you want to train your own models, you should stay here. We also have a [playlist](https://soundcloud.com/pedro-uria-193566069/sets/classical-846-lstm).
 
 ## Structure
 
-The repo is organized in various subdirectories. [code](code) contains all the code used in the project, while [data](data) contains all the data used to trained the networks. [Group-Proposal](Group-Proposal) contains the project proposal, while [Final-Group-Presentation](Final-Group-Presentation) contains the presentation slides we used in class and [Final-Group-Project-Report](Final-Group-Project-Report) contains the report, which is the best source to understanding the project, although [Final-Group-Presentation](Final-Group-Presentation) may be enough. Some of our results are located in [generated-music](generated-music). There are also three folders that describe the individual work of each team member. 
+The repo is organized in various subdirectories. [code](code) contains all the code used in the project, while [data](data) contains all the data used to trained the networks. [Group-Proposal](Group-Proposal) contains the project proposal, while [Final-Group-Presentation](Final-Group-Presentation) contains the presentation slides we used in class and [Final-Group-Project-Report](Final-Group-Project-Report) contains the report, which is the best source to understanding the project, although [Final-Group-Presentation](Final-Group-Presentation) may be enough. Some of our results are located in [generated-music](generated-music). 
 
 ## Instructions
 
